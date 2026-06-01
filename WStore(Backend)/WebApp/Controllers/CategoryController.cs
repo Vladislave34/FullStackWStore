@@ -10,30 +10,34 @@ namespace WebApplication1.Controlers;
 [Authorize(Roles = "StoreOwner, Admin")]
 public class CategoryController(ICategoryService categoryService): ControllerBase
 {
+    private string Lang =>
+        Request.Headers["Accept-Language"].FirstOrDefault() ?? "en";
+
     [HttpGet("Categories")]
     [AllowAnonymous]
-    public async Task<IActionResult> GetSizes()
+    public async Task<IActionResult> GetAll()
     {
-        var list = await categoryService.GetAllCategories();
+        var list = await categoryService.GetAllCategories(Lang);
         return Ok(list);
     }
 
     [HttpGet("Category/{id}")]
-    public async Task<IActionResult> GetSizeById(Guid id)
+    [AllowAnonymous]
+    public async Task<IActionResult> GetById(Guid id)
     {
-        var entity = await categoryService.GetCategoryById(id);
+        var entity = await categoryService.GetCategoryById(id, Lang);
         return Ok(entity);
     }
 
     [HttpPost("Add")]
-    public async Task<IActionResult> AddCategory(CategoryAddUpdateModel model)
+    public async Task<IActionResult> AddCategory([FromForm] CategoryAddUpdateModel model)
     {
         await categoryService.AddCategory(model);
         return Ok();
     }
 
     [HttpPut("Update/{id}")]
-    public async Task<IActionResult> UpdateCategory(Guid id, CategoryAddUpdateModel model)
+    public async Task<IActionResult> UpdateCategory(Guid id, [FromForm] CategoryAddUpdateModel model)
     {
         await categoryService.UpdateCategory(id, model);
         return Ok();
@@ -52,7 +56,6 @@ public class CategoryController(ICategoryService categoryService): ControllerBas
         await categoryService.RemoveAllCategories();
         return Ok();
     }
-    
     
 
 }

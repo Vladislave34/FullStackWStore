@@ -1,0 +1,62 @@
+{
+  "nav": {
+    "women": "Жінкам",
+    "men": "Чоловікам",
+    "sale": "Розпродаж"
+  },
+  "hero": {
+    "collection": "Нова колекція 2026",
+    "title": "Одягайся так, як відчуваєш",
+    "subtitle": "Стильний одяг для кожного дня — від casual до вечірнього образу.",
+    "btn": "Переглянути колекцію",
+    "sale": "Sale до -50%",
+    "season": "Весна / Літо 2026",
+    "categories": {
+      "all": "Всі"
+    }
+  },
+  "products": {
+    "title": "Популярні товари",
+    "seeAll": "Дивитись всі"
+  },
+  "guestmenu": {
+    "login" : "Логін",
+    "register" : "Реєстрація"
+  },
+  "authorizemenu" : {
+    "myorders" : "Мої замовлення",
+    "profile" : "Профіль",
+    "logout" : "Вийти"
+  },
+  "loginform": {
+    "title": "Вхід до акаунту",
+    "subtitle": "Введіть дані для продовження",
+    "email": "Email",
+    "password": "Пароль",
+    "forgot": "Забули пароль?",
+    "submit": "Увійти"
+  },
+  "registerform": {
+    "title": "Реєстрація",
+    "subtitle": "Введіть дані для продовження",
+    "firstname": "First Name",
+    "lastname": "Last Name",
+    "avatar": "Avatar",
+    "upload": "Завантажити фото",
+    "username": "Username",
+    "email": "Email",
+    "password": "Пароль",
+    "submit": "Зареєструватися"
+  },
+  "storecreateform": {
+    "title": "Створення Магазину",
+    "subtitle": "Введіть дані для продовження",
+    "name_label": "Назва",
+    "name_placeholder": "Назва",
+    "description_label": "Опис",
+    "description_placeholder": "Опис",
+    "avatar_label": "Аватар",
+    "upload_text": "Завантажити фото (можна декілька)",
+    "submit": "Створити"
+  }
+}

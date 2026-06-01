@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+:root {
+    --bg: #f5f5f3;
+    --surface: #ffffff;
+    --card: #ffffff;
+    --border: rgba(0, 0, 0, 0.07);
+    --text: #1a1a1a;
+    --muted: #999999;
+    --accent: #444441;
+    --accent-soft: #F1EFE8;
+    --accent-mid: #888780;
+    --btn: #2C2C2A;
+    --price: #0F6E56;
+    --sale: #E24B4A;
+    --tag: #F1EFE8;
+    --tag-text: #5F5E5A;
+}
+
+.dark {
+    --bg: #0f0f0f;
+    --surface: #161616;
+    --card: #1e1e1e;
+    --border: rgba(255, 255, 255, 0.07);
+    --text: #f0f0f0;
+    --muted: #666666;
+    --accent: #888780;
+    --accent-soft: #2C2C2A;
+    --accent-mid: #5F5E5A;
+    --btn: #444441;
+    --price: #5DCAA5;
+    --sale: #E24B4A;
+    --tag: #222;
+    --tag-text: #B4B2A9;
+}

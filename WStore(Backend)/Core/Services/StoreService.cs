@@ -3,6 +3,7 @@ using AutoMapper.QueryableExtensions;
 using Core.Interfaces;
 using Core.Models.Store;
 using Core.Models.StoreImage;
+using Core.Models.User;
 using Domain;
 using Domain.Entities;
 using Domain.Entities.Identity;
@@ -16,11 +17,12 @@ public class StoreService(AppStoreContext context,
     IMapper mapper, IRedisService redisService,
     IHttpContextAccessor httpContextAccessor,
     UserManager<UserEntity> userManager, 
-    
+    IJwtTokenService jwtTokenService,
+    IAuthService authService,
     IEntityImageService<StoreImageEntity, StoreImageAddUpdateModel, StoreImageItemModel> storeImageService
     )  : IStoreService
 {
-    public async Task AddStore(StoreAddUpdateModel model)
+    public async Task<AuthResponseModel> AddStore(StoreAddUpdateModel model)
     {
         
         var entity = mapper.Map<StoreEntity>(model);
@@ -29,10 +31,12 @@ public class StoreService(AppStoreContext context,
         var email = httpContextAccessor.HttpContext?.User.Claims.First().Value;
         var user = await userManager.FindByEmailAsync(email);
         entity.OwnerId = user.Id;
+        await userManager.AddToRoleAsync(user, "StoreOwner");
 
         
         await context.Stores.AddAsync(entity);
         await context.SaveChangesAsync();
+        
 
         
         if (model.Images.Any())
@@ -45,7 +49,10 @@ public class StoreService(AppStoreContext context,
         await redisService.SetAsync($"store:{store.Id}", store, TimeSpan.FromMinutes(10));
         await redisService.RemoveAsync("stores:all");
 
-        
+        var id = await authService.GetUserIdAsync();
+        user = await userManager.FindByIdAsync(id.ToString());
+        return await jwtTokenService.CreateAuthResponse(user);
+
     }
 
     public async Task UpdateStore(Guid id, StoreAddUpdateModel model)
@@ -70,37 +77,68 @@ public class StoreService(AppStoreContext context,
 
     public async Task RemoveStore(Guid id)
     {
-        var entity = await context.Stores
-            .Include(s => s.Images) 
+        var store = await context.Stores
+            .Include(s => s.Images)
             .FirstOrDefaultAsync(s => s.Id == id);
-        if (entity == null)
+
+        if (store == null)
         {
             throw new Exception("Store not found");
         }
-        entity.IsDeleted = true;
-        foreach (var image in entity.Images)
+
+        store.IsDeleted = true;
+
+        foreach (var image in store.Images)
         {
             image.IsDeleted = true;
-            await storeImageService.DeleteImage(image.Id);
         }
+
+        // Ймовірно має бути store.UserId
+        var user = await userManager.FindByIdAsync(store.Id.ToString());
+
+        if (user != null)
+        {
+            await userManager.RemoveFromRoleAsync(user, "StoreOwner");
+        }
+
+        var imageDeleteTasks = store.Images
+            .Select(image => storeImageService.DeleteImage(image.Id));
+
+        await Task.WhenAll(imageDeleteTasks);
+
         await context.SaveChangesAsync();
-        await redisService.RemoveAsync($"store:{id}");
-        await redisService.RemoveAsync("stores:all");
+
+        await Task.WhenAll(
+            redisService.RemoveAsync($"store:{id}"),
+            redisService.RemoveAsync("stores:all")
+        );
     }
 
     public async Task RemoveAllStores()
     {
-        var entities = await context.Stores
+        var stores = await context.Stores
             .Include(s => s.Images)
             .ToListAsync();
-        foreach (var entity in entities)
+
+        foreach (var store in stores)
         {
-            entity.IsDeleted = true;
-            await storeImageService.DeleteAllImages(entity.Id);
-            await redisService.RemoveAsync($"store:{entity.Id}");
+            store.IsDeleted = true;
+
+            var user = await userManager.FindByIdAsync(store.OwnerId.ToString());
+
+            if (user != null)
+            {
+                await userManager.RemoveFromRoleAsync(user, "StoreOwner");
+            }
+
+            await Task.WhenAll(
+                storeImageService.DeleteAllImages(store.Id),
+                redisService.RemoveAsync($"store:{store.Id}")
+            );
         }
+
         await context.SaveChangesAsync();
-        await redisService.RemoveAsync($"stores:all");
+        await redisService.RemoveAsync("stores:all");
     }
 
     public async Task<IEnumerable<StoreItemModel>> GetAllStores()
@@ -113,6 +151,7 @@ public class StoreService(AppStoreContext context,
         }
 
         var stores = await context.Stores
+            .Include(s => s.Images) 
             .Where(x => !x.IsDeleted)
             .ProjectTo<StoreItemModel>(mapper.ConfigurationProvider)
             .ToListAsync();
@@ -130,10 +169,27 @@ public class StoreService(AppStoreContext context,
         }
 
         var entity = await context.Stores
-            .FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted);
+                .Include(s => s.Images)
+                .FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted) ;
         if (entity == null)
             throw new Exception("Product not found");
         var store = mapper.Map<StoreItemModel>(entity);
+        await redisService.SetAsync(key, store, TimeSpan.FromMinutes(10));
+        return store;
+    }
+    public async Task<StoreItemModel> GetStoreByUserId()
+    {
+        
+        var userId = await authService.GetUserIdAsync();
+       
+
+        var entity = await context.Stores
+            .Include(s => s.Images)
+            .FirstOrDefaultAsync(x => x.OwnerId == userId && !x.IsDeleted) ;
+        if (entity == null)
+            throw new Exception("Product not found");
+        var store = mapper.Map<StoreItemModel>(entity);
+        string key = $"store:{entity.Id}";
         await redisService.SetAsync(key, store, TimeSpan.FromMinutes(10));
         return store;
     }

@@ -9,7 +9,7 @@ public interface IProductService
     Task RemoveProduct(Guid id);
     Task RemoveAllProducts();
     
-    Task<IEnumerable<ProductItemModel>> GetAllProducts();
+    Task<IEnumerable<ProductItemModel>> GetAllProducts(string lang);
     
-    Task<ProductItemModel> GetProductById(Guid id);
+    Task<ProductItemModel> GetProductById(Guid id, string lang);
 }

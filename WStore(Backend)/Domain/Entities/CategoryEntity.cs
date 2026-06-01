@@ -9,6 +9,9 @@ public class CategoryEntity : BaseEntity<Guid>
 {
     [Required]
     public string Name { get; set; } = null!;
+    [Required]
+    public string NameUk { get; set; } = null!;
+    
 
     [Required] public string image { get; set; } = null!;
     

@@ -7,5 +7,5 @@ public class StoreAddUpdateModel
 {
     public string Name { get; set; } = null!;
     public string Description { get; set; } = null!;
-    public List<IFormFile> Images { get; set; }
+    public List<IFormFile> Images { get; set; } = new List<IFormFile>();
 }

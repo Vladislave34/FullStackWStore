@@ -10,7 +10,7 @@ using Microsoft.Extensions.Configuration;
 namespace Core.Services;
 
 public class UserService(IAuthService authService, IMapper mapper, AppStoreContext appStoreContext,  IConfiguration configuration,
-    IEmailSender smtpService, UserManager<UserEntity> userManager) : IUserService
+    IEmailSender smtpService, UserManager<UserEntity> userManager, IMinioImageService minioImageService, IJwtTokenService jwtTokenService) : IUserService
 {
     public async Task<UserItemModel> GetUserProfileAsync()
     {
@@ -23,6 +23,28 @@ public class UserService(IAuthService authService, IMapper mapper, AppStoreConte
         var profile = mapper.Map<UserItemModel>(user);
         return profile;
         
+    }
+    
+    public async Task<AuthResponseModel> EditProfileAsync(EditProfileModel model)
+    {
+        var userId = await authService.GetUserIdAsync();
+        Console.WriteLine(userId);
+        var entity = await appStoreContext.Users.FirstOrDefaultAsync(x => x.Id == userId);
+        if (entity == null)
+        {
+            throw new Exception("User not found");
+        }
+        Console.WriteLine(entity.LastName);
+        if (entity == null)
+        {
+            throw new Exception("User not found");
+        }
+        mapper.Map(model, entity);
+        if (model.Image != null)
+            entity.Image = await minioImageService.UpdateImageAsync(entity.Image, model.Image);
+        await appStoreContext.SaveChangesAsync();
+        var response = await jwtTokenService.CreateAuthResponse(entity);
+        return response;
     }
 
     public async Task<bool> ForgotPasswordAsync(ForgotPasswordModel model)

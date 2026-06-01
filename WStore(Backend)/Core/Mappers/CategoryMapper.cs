@@ -9,6 +9,7 @@ public class CategoryMapper : Profile
     public CategoryMapper()
     {
         CreateMap<CategoryEntity, CategoryItemModel>();
-        CreateMap<CategoryAddUpdateModel, CategoryEntity>();
+        CreateMap<CategoryAddUpdateModel, CategoryEntity>()
+            .ForMember(x => x.image, opt => opt.Ignore());
     }
 }

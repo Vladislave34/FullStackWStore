@@ -20,12 +20,14 @@ public class JwtTokenService(IConfiguration configuration, UserManager<UserEntit
         var claims = new List<Claim>
         {
             new Claim("email", user.Email ?? "do not have an email"),
-            new Claim("name", $"{user.FirstName} {user.LastName}"),
+            new Claim("username", user.UserName ?? "do not have an username"),
             new Claim("image", user.Image),
+            new Claim("firstName", user.FirstName ),
+            new Claim("lastName", user.LastName ),
         };
         foreach (var role in await userManager.GetRolesAsync(user))
         {
-            claims.Add(new Claim("role", role));
+            claims.Add(new Claim("roles", role));
         }
         var keyBytes = System.Text.Encoding.UTF8.GetBytes(key);
         

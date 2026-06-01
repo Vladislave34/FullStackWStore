@@ -100,6 +100,10 @@ namespace Domain.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("NameUk")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -479,10 +483,18 @@ namespace Domain.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("DescriptionUk")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("NameUk")
                         .IsRequired()
                         .HasColumnType("text");
 

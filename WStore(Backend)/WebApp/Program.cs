@@ -185,16 +185,17 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
-app.UseCors("AllowAll");
+
+
+app.UseRouting();
+app.UseCors("AllowAll");      
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.UseHttpsRedirection();
 
 app.UseSwagger();
 app.UseSwaggerUI();
-
-app.UseRouting();
-app.UseAuthentication();
-app.UseAuthorization();
 
 
 app.MapControllers();
@@ -216,7 +217,9 @@ using (var serviceScope = app.Services.CreateScope())
     var redisService = serviceScope.ServiceProvider.GetRequiredService<IRedisService>();
     var mapper = serviceScope.ServiceProvider.GetRequiredService<IMapper>();
     var imageService = serviceScope.ServiceProvider.GetRequiredService<IMinioImageService>();
-    await DataSeeder.SeedAsync(dbContext, redisService, mapper, imageService);
+    var searchService = serviceScope.ServiceProvider.GetRequiredService<ISearchService>();
+
+    await DataSeeder.SeedAsync(dbContext, redisService, mapper, imageService, searchService);
     var roles = new[] {"Admin",  "User", "StoreOwner"};
     var s3 = serviceScope.ServiceProvider.GetRequiredService<IAmazonS3>();
     try
