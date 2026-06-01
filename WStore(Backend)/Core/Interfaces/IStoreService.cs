@@ -1,11 +1,12 @@
 using Core.Models.Size;
 using Core.Models.Store;
+using Core.Models.User;
 
 namespace Core.Interfaces;
 
 public interface IStoreService
 {
-    Task AddStore(StoreAddUpdateModel model);
+    Task<AuthResponseModel> AddStore(StoreAddUpdateModel model);
     Task UpdateStore(Guid id, StoreAddUpdateModel model);
     Task RemoveStore(Guid id);
     Task RemoveAllStores();
@@ -13,4 +14,5 @@ public interface IStoreService
     Task<IEnumerable<StoreItemModel>> GetAllStores();
     
     Task<StoreItemModel> GetStoreById(Guid id);
+    Task<StoreItemModel> GetStoreByUserId();
 }

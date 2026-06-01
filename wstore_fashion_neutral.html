@@ -1,0 +1,263 @@
+
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  .ws-root { font-family: var(--font-sans); transition: all 0.3s; }
+  .ws-root.dark { --bg: #0f0f0f; --surface: #161616; --card: #1e1e1e; --border: rgba(255,255,255,0.07); --text: #f0f0f0; --muted: #666; --accent: #888780; --accent-soft: #2C2C2A; --accent-mid: #5F5E5A; --price: #5DCAA5; --btn: #444441; --tag: #222; --tag-text: #B4B2A9; --sale: #E24B4A; }
+  .ws-root.light { --bg: #f5f5f3; --surface: #fff; --card: #fff; --border: rgba(0,0,0,0.07); --text: #1a1a1a; --muted: #999; --accent: #444441; --accent-soft: #F1EFE8; --accent-mid: #888780; --price: #0F6E56; --btn: #2C2C2A; --tag: #F1EFE8; --tag-text: #5F5E5A; --sale: #E24B4A; }
+  .ws { background: var(--bg); color: var(--text); min-height: 640px; border-radius: 16px; overflow: hidden; border: 0.5px solid var(--border); }
+
+  .nav { background: var(--surface); border-bottom: 0.5px solid var(--border); padding: 0 24px; display: flex; align-items: center; justify-content: space-between; height: 56px; }
+  .logo { font-size: 21px; font-weight: 500; letter-spacing: -0.5px; color: var(--text); }
+  .logo span { color: var(--accent-mid); }
+  .nav-links { display: flex; gap: 22px; }
+  .nav-links a { font-size: 13px; color: var(--muted); text-decoration: none; cursor: pointer; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-right { display: flex; align-items: center; gap: 10px; }
+  .nav-icon { width: 32px; height: 32px; border-radius: 8px; background: var(--accent-soft); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 14px; }
+  .cart-wrap { position: relative; }
+  .cbadge { position: absolute; top: -4px; right: -4px; background: var(--accent); color: #fff; font-size: 9px; width: 14px; height: 14px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 500; }
+  .toggle-btn { display: flex; align-items: center; gap: 6px; background: var(--tag); border: 0.5px solid var(--border); border-radius: 20px; padding: 4px 12px; cursor: pointer; font-size: 12px; color: var(--tag-text); }
+
+  .hero { display: grid; grid-template-columns: 1fr 1fr; min-height: 200px; }
+  .hero-left { background: var(--surface); padding: 32px 28px; display: flex; flex-direction: column; justify-content: center; border-right: 0.5px solid var(--border); }
+  .hero-eyebrow { font-size: 11px; color: var(--accent-mid); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 10px; font-weight: 500; }
+  .hero-left h1 { font-size: 28px; font-weight: 500; line-height: 1.25; }
+  .hero-left p { font-size: 13px; color: var(--muted); margin-top: 10px; line-height: 1.7; max-width: 260px; }
+  .hero-btns { display: flex; gap: 8px; margin-top: 18px; }
+  .btn-p { background: var(--btn); color: #fff; border: none; padding: 9px 20px; border-radius: 8px; font-size: 13px; cursor: pointer; font-weight: 500; }
+  .btn-s { background: transparent; color: var(--text); border: 0.5px solid var(--border); padding: 9px 20px; border-radius: 8px; font-size: 13px; cursor: pointer; }
+  .hero-right { background: var(--accent-soft); display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 10px; padding: 24px; }
+  .mannequin { font-size: 68px; line-height: 1; }
+  .hero-tag { background: var(--btn); color: #fff; font-size: 11px; padding: 4px 14px; border-radius: 20px; font-weight: 500; }
+
+  .cats-row { padding: 14px 24px; background: var(--surface); border-bottom: 0.5px solid var(--border); display: flex; gap: 8px; overflow-x: auto; }
+  .cat { background: var(--tag); color: var(--tag-text); font-size: 12px; padding: 6px 14px; border-radius: 20px; cursor: pointer; border: 0.5px solid var(--border); white-space: nowrap; flex-shrink: 0; }
+  .cat.active { background: var(--btn); color: #fff; border-color: var(--btn); }
+
+  .section { padding: 20px 24px; }
+  .sec-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+  .sec-title { font-size: 15px; font-weight: 500; }
+  .see-all { font-size: 12px; color: var(--accent-mid); cursor: pointer; }
+  .products { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .pcard { background: var(--card); border: 0.5px solid var(--border); border-radius: 12px; overflow: hidden; cursor: pointer; transition: border-color 0.2s; position: relative; }
+  .pcard:hover { border-color: var(--accent-mid); }
+  .sale-tag { position: absolute; top: 8px; left: 8px; background: var(--sale); color: #fff; font-size: 10px; padding: 2px 7px; border-radius: 4px; font-weight: 500; }
+  .wish { position: absolute; top: 8px; right: 8px; font-size: 14px; cursor: pointer; }
+  .pimg { height: 110px; display: flex; align-items: center; justify-content: center; background: var(--accent-soft); font-size: 40px; }
+  .pbody { padding: 10px; }
+  .pname { font-size: 12px; font-weight: 500; margin-bottom: 2px; }
+  .pbrand { font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+  .pfoot { display: flex; align-items: center; justify-content: space-between; }
+  .pprice { font-size: 13px; font-weight: 500; color: var(--price); }
+  .pold { font-size: 10px; color: var(--muted); text-decoration: line-through; display: block; }
+  .add-btn { width: 24px; height: 24px; background: var(--btn); border: none; border-radius: 6px; color: #fff; font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center; line-height: 1; flex-shrink: 0; }
+
+  .banners { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 0 24px 24px; }
+  .banner { border-radius: 12px; padding: 18px 20px; display: flex; flex-direction: column; justify-content: space-between; min-height: 90px; }
+  .banner.b1 { background: var(--btn); }
+  .banner.b2 { background: var(--accent-soft); border: 0.5px solid var(--border); }
+  .banner h3 { font-size: 14px; font-weight: 500; color: #fff; }
+  .banner p { font-size: 11px; color: rgba(255,255,255,0.65); margin-top: 4px; }
+  .banner.b2 h3 { color: var(--text); }
+  .banner.b2 p { color: var(--muted); }
+  .banner-link { font-size: 11px; color: rgba(255,255,255,0.85); text-decoration: underline; cursor: pointer; margin-top: 8px; }
+  .banner.b2 .banner-link { color: var(--accent-mid); }
+</style>
+
+<div class="ws-root dark" id="wsroot">
+  <div class="ws">
+
+    <nav class="nav">
+      <div class="logo">W<span>Store</span></div>
+      <div class="nav-links">
+        <a>Жінкам</a>
+        <a>Чоловікам</a>
+        <a>Дітям</a>
+        <a>Нова колекція</a>
+        <a>Sale</a>
+      </div>
+      <div class="nav-right">
+        <div class="toggle-btn" onclick="toggleTheme()">
+          <span id="ticon">☀</span>
+          <span id="tlabel">Світла</span>
+        </div>
+        <div class="nav-icon">🔍</div>
+        <div class="nav-icon cart-wrap">🛍<span class="cbadge">2</span></div>
+        <div class="nav-icon">👤</div>
+      </div>
+    </nav>
+
+    <div class="hero">
+      <div class="hero-left">
+        <div class="hero-eyebrow">Нова колекція 2026</div>
+        <h1>Одягайся так, як відчуваєш</h1>
+        <p>Стильний одяг для кожного дня — від casual до вечірнього образу.</p>
+        <div class="hero-btns">
+          <button class="btn-p">Переглянути колекцію</button>
+          <button class="btn-s">Sale до -50%</button>
+        </div>
+      </div>
+      <div class="hero-right">
+        <div class="mannequin">🧥</div>
+        <div class="hero-tag">Весна / Літо 2026</div>
+      </div>
+    </div>
+
+    <div class="cats-row">
+      <div class="cat active">Всі</div>
+      <div class="cat">Плаття</div>
+      <div class="cat">Футболки</div>
+      <div class="cat">Джинси</div>
+      <div class="cat">Куртки</div>
+      <div class="cat">Взуття</div>
+      <div class="cat">Аксесуари</div>
+      <div class="cat">Спорт</div>
+    </div>
+
+    <div class="section">
+      <div class="sec-head">
+        <span class="sec-title">Популярні товари</span>
+        <span class="see-all">Дивитись всі →</span>
+      </div>
+      <div class="products">
+
+        <div class="pcard">
+          <span class="sale-tag">-20%</span>
+          <span class="wish">🤍</span>
+          <div class="pimg">👗</div>
+          <div class="pbody">
+            <div class="pname">Літнє плаття</div>
+            <div class="pbrand">Zara</div>
+            <div class="pfoot">
+              <div><span class="pprice">1 599₴</span><span class="pold">1 999₴</span></div>
+              <button class="add-btn">+</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="pcard">
+          <span class="wish">🤍</span>
+          <div class="pimg">👕</div>
+          <div class="pbody">
+            <div class="pname">Базова футболка</div>
+            <div class="pbrand">H&M</div>
+            <div class="pfoot">
+              <div><span class="pprice">499₴</span></div>
+              <button class="add-btn">+</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="pcard">
+          <span class="sale-tag">-30%</span>
+          <span class="wish">🤍</span>
+          <div class="pimg">👖</div>
+          <div class="pbody">
+            <div class="pname">Slim джинси</div>
+            <div class="pbrand">Levi's</div>
+            <div class="pfoot">
+              <div><span class="pprice">1 749₴</span><span class="pold">2 499₴</span></div>
+              <button class="add-btn">+</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="pcard">
+          <span class="wish">🤍</span>
+          <div class="pimg">🧥</div>
+          <div class="pbody">
+            <div class="pname">Куртка оверсайз</div>
+            <div class="pbrand">Pull&Bear</div>
+            <div class="pfoot">
+              <div><span class="pprice">3 299₴</span></div>
+              <button class="add-btn">+</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="pcard">
+          <span class="sale-tag">-15%</span>
+          <span class="wish">🤍</span>
+          <div class="pimg">👟</div>
+          <div class="pbody">
+            <div class="pname">Кросівки білі</div>
+            <div class="pbrand">Nike</div>
+            <div class="pfoot">
+              <div><span class="pprice">3 399₴</span><span class="pold">3 999₴</span></div>
+              <button class="add-btn">+</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="pcard">
+          <span class="wish">🤍</span>
+          <div class="pimg">👜</div>
+          <div class="pbody">
+            <div class="pname">Сумка шопер</div>
+            <div class="pbrand">Mango</div>
+            <div class="pfoot">
+              <div><span class="pprice">1 199₴</span></div>
+              <button class="add-btn">+</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="pcard">
+          <span class="sale-tag">-40%</span>
+          <span class="wish">🤍</span>
+          <div class="pimg">🧣</div>
+          <div class="pbody">
+            <div class="pname">Шарф вовняний</div>
+            <div class="pbrand">Reserved</div>
+            <div class="pfoot">
+              <div><span class="pprice">599₴</span><span class="pold">999₴</span></div>
+              <button class="add-btn">+</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="pcard">
+          <span class="wish">🤍</span>
+          <div class="pimg">🩴</div>
+          <div class="pbody">
+            <div class="pname">Сандалі літні</div>
+            <div class="pbrand">Bershka</div>
+            <div class="pfoot">
+              <div><span class="pprice">899₴</span></div>
+              <button class="add-btn">+</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="banners">
+      <div class="banner b1">
+        <div>
+          <h3>Розпродаж до -50%</h3>
+          <p>Тільки до кінця тижня</p>
+        </div>
+        <span class="banner-link">Перейти до Sale →</span>
+      </div>
+      <div class="banner b2">
+        <div>
+          <h3>Нова колекція вже тут</h3>
+          <p>Весна / Літо 2026</p>
+        </div>
+        <span class="banner-link">Дивитись →</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  let dark = true;
+  function toggleTheme() {
+    dark = !dark;
+    document.getElementById('wsroot').className = 'ws-root ' + (dark ? 'dark' : 'light');
+    document.getElementById('ticon').textContent = dark ? '☀' : '🌙';
+    document.getElementById('tlabel').textContent = dark ? 'Світла' : 'Темна';
+  }
+</script>

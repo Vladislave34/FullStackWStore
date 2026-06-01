@@ -3,24 +3,27 @@ using Core.Models.Product;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace WebApplication1.Controlers;
 [ApiController]
 [Route("api/[controller]")]
 [Authorize(Roles = "StoreOwner, Admin")]
 public class ProductController(IProductService productService) : ControllerBase
 {
+    private string Lang =>
+        Request.Headers["Accept-Language"].FirstOrDefault() ?? "en";
+
     [HttpGet("Products")]
     [AllowAnonymous]
     public async Task<IActionResult> GetProducts()
     {
-        var list = await productService.GetAllProducts();
+        var list = await productService.GetAllProducts(Lang);
         return Ok(list);
     }
 
     [HttpGet("Product/{id}")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetProductById(Guid id)
     {
-        var entity = await productService.GetProductById(id);
+        var entity = await productService.GetProductById(id, Lang);
         return Ok(entity);
     }
 
@@ -44,6 +47,7 @@ public class ProductController(IProductService productService) : ControllerBase
         await productService.RemoveProduct(id);
         return Ok();
     }
+
     [HttpDelete("RemoveAll")]
     public async Task<IActionResult> RemoveAllProducts()
     {

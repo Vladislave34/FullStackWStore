@@ -1,0 +1,270 @@
+
+<style>
+  .demo-wrap { display: flex; gap: 32px; align-items: flex-start; padding: 1.5rem 0; flex-wrap: wrap; }
+  .device-label { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 8px; font-weight: 500; letter-spacing: 0.5px; }
+
+  /* DEVICE FRAMES */
+  .phone-frame { width: 320px; flex-shrink: 0; }
+  .tablet-frame { width: 600px; flex-shrink: 0; }
+
+  /* SHARED THEME VARS */
+  .ws-demo { --bg:#0f0f0f;--surface:#161616;--card:#1e1e1e;--border:rgba(255,255,255,0.07);--text:#f0f0f0;--muted:#888;--accent-mid:#888780;--price:#5DCAA5;--btn:#444441;--tag:#222;--tag-text:#B4B2A9;--sale:#E24B4A;--accent-soft:#2C2C2A; }
+  .ws-demo.light { --bg:#f5f5f3;--surface:#fff;--card:#fff;--border:rgba(0,0,0,0.07);--text:#1a1a1a;--muted:#999;--accent-mid:#888780;--price:#0F6E56;--btn:#2C2C2A;--tag:#F1EFE8;--tag-text:#5F5E5A;--sale:#E24B4A;--accent-soft:#F1EFE8; }
+
+  .ws-demo { background:var(--bg);color:var(--text);border-radius:12px;overflow:hidden;border:0.5px solid var(--border);font-family:var(--font-sans); }
+
+  /* NAV MOBILE */
+  .m-nav { background:var(--surface);border-bottom:0.5px solid var(--border);padding:0 14px;display:flex;align-items:center;justify-content:space-between;height:48px; }
+  .m-logo { font-size:16px;font-weight:500;color:var(--text); }
+  .m-logo span { color:var(--accent-mid); }
+  .m-nav-right { display:flex;align-items:center;gap:6px; }
+  .m-icon { width:30px;height:30px;border-radius:8px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font-size:13px;position:relative; }
+  .m-badge { position:absolute;top:-3px;right:-3px;background:#E24B4A;color:#fff;font-size:8px;width:13px;height:13px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:500; }
+  .m-burger { display:flex;flex-direction:column;gap:4px;cursor:pointer;padding:4px; }
+  .m-burger span { display:block;width:18px;height:1.5px;background:var(--text);border-radius:2px; }
+
+  /* HERO MOBILE */
+  .m-hero { background:var(--surface);padding:20px 14px 0; }
+  .m-eyebrow { font-size:10px;color:var(--accent-mid);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px; }
+  .m-hero h1 { font-size:20px;font-weight:500;line-height:1.25;margin-bottom:8px; }
+  .m-hero p { font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:14px; }
+  .m-btns { display:flex;gap:8px;margin-bottom:16px; }
+  .m-btn-p { background:var(--btn);color:#fff;border:none;padding:8px 14px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer;flex:1; }
+  .m-btn-s { background:transparent;color:var(--text);border:0.5px solid var(--border);padding:8px 14px;border-radius:8px;font-size:12px;cursor:pointer;flex:1; }
+  .m-hero-img { background:var(--accent-soft);border-radius:8px;height:80px;display:flex;align-items:center;justify-content:center;font-size:44px;margin-bottom:0; }
+
+  /* CATS MOBILE */
+  .m-cats { padding:12px 14px;background:var(--surface);border-bottom:0.5px solid var(--border);display:flex;gap:6px;overflow-x:auto;scrollbar-width:none; }
+  .m-cats::-webkit-scrollbar { display:none; }
+  .m-cat { background:var(--tag);color:var(--tag-text);font-size:11px;padding:5px 12px;border-radius:20px;cursor:pointer;border:0.5px solid var(--border);white-space:nowrap;flex-shrink:0; }
+  .m-cat.active { background:var(--btn);color:#fff;border-color:var(--btn); }
+
+  /* PRODUCTS MOBILE — 2 cols */
+  .m-section { padding:14px; }
+  .m-sec-head { display:flex;justify-content:space-between;align-items:center;margin-bottom:10px; }
+  .m-sec-title { font-size:13px;font-weight:500; }
+  .m-see-all { font-size:11px;color:var(--accent-mid); }
+  .m-grid { display:grid;grid-template-columns:1fr 1fr;gap:8px; }
+  .m-card { background:var(--card);border:0.5px solid var(--border);border-radius:10px;overflow:hidden;position:relative; }
+  .m-sale { position:absolute;top:6px;left:6px;background:var(--sale);color:#fff;font-size:9px;padding:2px 6px;border-radius:4px;font-weight:500; }
+  .m-wish { position:absolute;top:6px;right:6px;font-size:12px; }
+  .m-pimg { height:85px;display:flex;align-items:center;justify-content:center;background:var(--accent-soft);font-size:32px; }
+  .m-pbody { padding:8px; }
+  .m-pname { font-size:11px;font-weight:500;margin-bottom:1px; }
+  .m-pbrand { font-size:10px;color:var(--muted);margin-bottom:5px; }
+  .m-pfoot { display:flex;align-items:center;justify-content:space-between; }
+  .m-pprice { font-size:12px;font-weight:500;color:var(--price); }
+  .m-pold { font-size:9px;color:var(--muted);text-decoration:line-through;display:block; }
+  .m-add { width:22px;height:22px;background:var(--btn);border:none;border-radius:5px;color:#fff;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center; }
+
+  /* BANNER MOBILE */
+  .m-banner { margin:0 14px 14px;background:var(--btn);border-radius:10px;padding:14px 16px;display:flex;justify-content:space-between;align-items:center; }
+  .m-banner h3 { font-size:13px;font-weight:500;color:#fff; }
+  .m-banner p { font-size:10px;color:rgba(255,255,255,0.6);margin-top:2px; }
+  .m-banner-link { font-size:11px;color:rgba(255,255,255,0.85);text-decoration:underline;white-space:nowrap; }
+
+  /* ---- TABLET ---- */
+
+  /* NAV TABLET */
+  .t-nav { background:var(--surface);border-bottom:0.5px solid var(--border);padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:52px; }
+  .t-logo { font-size:18px;font-weight:500;color:var(--text); }
+  .t-logo span { color:var(--accent-mid); }
+  .t-links { display:flex;gap:16px; }
+  .t-links a { font-size:12px;color:var(--muted);text-decoration:none; }
+  .t-nav-right { display:flex;align-items:center;gap:8px; }
+  .t-icon { width:32px;height:32px;border-radius:8px;background:var(--accent-soft);display:flex;align-items:center;justify-content:center;font-size:14px;position:relative; }
+  .t-badge { position:absolute;top:-3px;right:-3px;background:#E24B4A;color:#fff;font-size:8px;width:13px;height:13px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:500; }
+
+  /* HERO TABLET — side by side */
+  .t-hero { display:grid;grid-template-columns:1fr 1fr;min-height:140px; }
+  .t-hero-left { background:var(--surface);padding:22px 20px;display:flex;flex-direction:column;justify-content:center;border-right:0.5px solid var(--border); }
+  .t-eyebrow { font-size:10px;color:var(--accent-mid);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px; }
+  .t-hero-left h1 { font-size:20px;font-weight:500;line-height:1.25;margin-bottom:8px; }
+  .t-hero-left p { font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:14px; }
+  .t-btns { display:flex;gap:8px; }
+  .t-btn-p { background:var(--btn);color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:12px;font-weight:500;cursor:pointer; }
+  .t-btn-s { background:transparent;color:var(--text);border:0.5px solid var(--border);padding:8px 16px;border-radius:8px;font-size:12px;cursor:pointer; }
+  .t-hero-right { background:var(--accent-soft);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;padding:20px; }
+  .t-mannequin { font-size:52px; }
+  .t-hero-tag { background:var(--btn);color:#fff;font-size:10px;padding:3px 12px;border-radius:20px; }
+
+  /* CATS TABLET */
+  .t-cats { padding:10px 20px;background:var(--surface);border-bottom:0.5px solid var(--border);display:flex;gap:6px;overflow-x:auto;scrollbar-width:none; }
+  .t-cats::-webkit-scrollbar { display:none; }
+  .t-cat { background:var(--tag);color:var(--tag-text);font-size:11px;padding:5px 12px;border-radius:20px;cursor:pointer;border:0.5px solid var(--border);white-space:nowrap;flex-shrink:0; }
+  .t-cat.active { background:var(--btn);color:#fff;border-color:var(--btn); }
+
+  /* PRODUCTS TABLET — 3 cols */
+  .t-section { padding:16px 20px; }
+  .t-sec-head { display:flex;justify-content:space-between;align-items:center;margin-bottom:12px; }
+  .t-sec-title { font-size:14px;font-weight:500; }
+  .t-see-all { font-size:11px;color:var(--accent-mid); }
+  .t-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:10px; }
+  .t-card { background:var(--card);border:0.5px solid var(--border);border-radius:10px;overflow:hidden;position:relative; }
+  .t-sale { position:absolute;top:7px;left:7px;background:var(--sale);color:#fff;font-size:9px;padding:2px 6px;border-radius:4px;font-weight:500; }
+  .t-wish { position:absolute;top:7px;right:7px;font-size:12px; }
+  .t-pimg { height:100px;display:flex;align-items:center;justify-content:center;background:var(--accent-soft);font-size:38px; }
+  .t-pbody { padding:10px; }
+  .t-pname { font-size:12px;font-weight:500;margin-bottom:2px; }
+  .t-pbrand { font-size:11px;color:var(--muted);margin-bottom:6px; }
+  .t-pfoot { display:flex;align-items:center;justify-content:space-between; }
+  .t-pprice { font-size:13px;font-weight:500;color:var(--price); }
+  .t-pold { font-size:10px;color:var(--muted);text-decoration:line-through;display:block; }
+  .t-add { width:24px;height:24px;background:var(--btn);border:none;border-radius:6px;color:#fff;font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center; }
+
+  /* BANNERS TABLET */
+  .t-banners { display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 20px 20px; }
+  .t-banner { border-radius:10px;padding:16px 18px;display:flex;flex-direction:column;justify-content:space-between;min-height:80px; }
+  .t-banner.b1 { background:var(--btn); }
+  .t-banner.b2 { background:var(--accent-soft);border:0.5px solid var(--border); }
+  .t-banner h3 { font-size:13px;font-weight:500;color:#fff; }
+  .t-banner p { font-size:10px;color:rgba(255,255,255,0.6);margin-top:3px; }
+  .t-banner.b2 h3 { color:var(--text); }
+  .t-banner.b2 p { color:var(--muted); }
+  .t-banner-link { font-size:11px;color:rgba(255,255,255,0.8);text-decoration:underline;margin-top:8px;cursor:pointer; }
+  .t-banner.b2 .t-banner-link { color:var(--accent-mid); }
+
+  .toggle-row { display:flex;gap:8px;margin-bottom:12px; }
+  .theme-btn { background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:20px;padding:5px 14px;font-size:12px;color:var(--color-text-secondary);cursor:pointer; }
+  .theme-btn.active { background:var(--color-background-primary);color:var(--color-text-primary);border-color:var(--color-border-secondary); }
+</style>
+
+<div class="toggle-row">
+  <button class="theme-btn active" onclick="setTheme('dark',this)">Темна</button>
+  <button class="theme-btn" onclick="setTheme('light',this)">Світла</button>
+</div>
+
+<div class="demo-wrap" id="demowrap">
+
+  <!-- PHONE -->
+  <div class="phone-frame">
+    <div class="device-label">Телефон — 375px</div>
+    <div class="ws-demo" id="phone">
+
+      <nav class="m-nav">
+        <div class="m-logo">W<span>Store</span></div>
+        <div class="m-nav-right">
+          <div class="m-icon">🔍</div>
+          <div class="m-icon">🛍<span class="m-badge">2</span></div>
+          <div class="m-burger"><span></span><span></span><span></span></div>
+        </div>
+      </nav>
+
+      <div class="m-hero">
+        <div class="m-eyebrow">Нова колекція 2026</div>
+        <h1>Одягайся так, як відчуваєш</h1>
+        <p>Стильний одяг для кожного дня.</p>
+        <div class="m-btns">
+          <button class="m-btn-p">Переглянути</button>
+          <button class="m-btn-s">Sale −50%</button>
+        </div>
+        <div class="m-hero-img">🧥</div>
+      </div>
+
+      <div class="m-cats">
+        <div class="m-cat active">Всі</div>
+        <div class="m-cat">Плаття</div>
+        <div class="m-cat">Футболки</div>
+        <div class="m-cat">Джинси</div>
+        <div class="m-cat">Куртки</div>
+        <div class="m-cat">Взуття</div>
+      </div>
+
+      <div class="m-section">
+        <div class="m-sec-head">
+          <span class="m-sec-title">Популярні товари</span>
+          <span class="m-see-all">Всі →</span>
+        </div>
+        <div class="m-grid">
+          <div class="m-card"><span class="m-sale">−20%</span><span class="m-wish">🤍</span><div class="m-pimg">👗</div><div class="m-pbody"><div class="m-pname">Літнє плаття</div><div class="m-pbrand">Zara</div><div class="m-pfoot"><div><span class="m-pprice">1 599₴</span><span class="m-pold">1 999₴</span></div><button class="m-add">+</button></div></div></div>
+          <div class="m-card"><span class="m-wish">🤍</span><div class="m-pimg">👕</div><div class="m-pbody"><div class="m-pname">Базова футболка</div><div class="m-pbrand">H&M</div><div class="m-pfoot"><div><span class="m-pprice">499₴</span></div><button class="m-add">+</button></div></div></div>
+          <div class="m-card"><span class="m-sale">−30%</span><span class="m-wish">🤍</span><div class="m-pimg">👖</div><div class="m-pbody"><div class="m-pname">Slim джинси</div><div class="m-pbrand">Levi's</div><div class="m-pfoot"><div><span class="m-pprice">1 749₴</span><span class="m-pold">2 499₴</span></div><button class="m-add">+</button></div></div></div>
+          <div class="m-card"><span class="m-wish">🤍</span><div class="m-pimg">🧥</div><div class="m-pbody"><div class="m-pname">Куртка оверсайз</div><div class="m-pbrand">Pull&Bear</div><div class="m-pfoot"><div><span class="m-pprice">3 299₴</span></div><button class="m-add">+</button></div></div></div>
+        </div>
+      </div>
+
+      <div class="m-banner">
+        <div><h3>Розпродаж до −50%</h3><p>Тільки до кінця тижня</p></div>
+        <span class="m-banner-link">Sale →</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TABLET -->
+  <div class="tablet-frame">
+    <div class="device-label">Планшет — 768px</div>
+    <div class="ws-demo" id="tablet">
+
+      <nav class="t-nav">
+        <div class="t-logo">W<span>Store</span></div>
+        <div class="t-links">
+          <a>Жінкам</a><a>Чоловікам</a><a>Дітям</a><a>Sale</a>
+        </div>
+        <div class="t-nav-right">
+          <div class="t-icon">🔍</div>
+          <div class="t-icon">🛍<span class="t-badge">2</span></div>
+          <div class="t-icon">👤</div>
+        </div>
+      </nav>
+
+      <div class="t-hero">
+        <div class="t-hero-left">
+          <div class="t-eyebrow">Нова колекція 2026</div>
+          <h1>Одягайся так, як відчуваєш</h1>
+          <p>Стильний одяг для кожного дня — від casual до вечірнього образу.</p>
+          <div class="t-btns">
+            <button class="t-btn-p">Переглянути</button>
+            <button class="t-btn-s">Sale −50%</button>
+          </div>
+        </div>
+        <div class="t-hero-right">
+          <div class="t-mannequin">🧥</div>
+          <div class="t-hero-tag">Весна / Літо 2026</div>
+        </div>
+      </div>
+
+      <div class="t-cats">
+        <div class="t-cat active">Всі</div>
+        <div class="t-cat">Плаття</div>
+        <div class="t-cat">Футболки</div>
+        <div class="t-cat">Джинси</div>
+        <div class="t-cat">Куртки</div>
+        <div class="t-cat">Взуття</div>
+        <div class="t-cat">Аксесуари</div>
+      </div>
+
+      <div class="t-section">
+        <div class="t-sec-head">
+          <span class="t-sec-title">Популярні товари</span>
+          <span class="t-see-all">Дивитись всі →</span>
+        </div>
+        <div class="t-grid">
+          <div class="t-card"><span class="t-sale">−20%</span><span class="t-wish">🤍</span><div class="t-pimg">👗</div><div class="t-pbody"><div class="t-pname">Літнє плаття</div><div class="t-pbrand">Zara</div><div class="t-pfoot"><div><span class="t-pprice">1 599₴</span><span class="t-pold">1 999₴</span></div><button class="t-add">+</button></div></div></div>
+          <div class="t-card"><span class="t-wish">🤍</span><div class="t-pimg">👕</div><div class="t-pbody"><div class="t-pname">Базова футболка</div><div class="t-pbrand">H&M</div><div class="t-pfoot"><div><span class="t-pprice">499₴</span></div><button class="t-add">+</button></div></div></div>
+          <div class="t-card"><span class="t-sale">−30%</span><span class="t-wish">🤍</span><div class="t-pimg">👖</div><div class="t-pbody"><div class="t-pname">Slim джинси</div><div class="t-pbrand">Levi's</div><div class="t-pfoot"><div><span class="t-pprice">1 749₴</span><span class="t-pold">2 499₴</span></div><button class="t-add">+</button></div></div></div>
+          <div class="t-card"><span class="t-wish">🤍</span><div class="t-pimg">🧥</div><div class="t-pbody"><div class="t-pname">Куртка оверсайз</div><div class="t-pbrand">Pull&Bear</div><div class="t-pfoot"><div><span class="t-pprice">3 299₴</span></div><button class="t-add">+</button></div></div></div>
+          <div class="t-card"><span class="t-sale">−15%</span><span class="t-wish">🤍</span><div class="t-pimg">👟</div><div class="t-pbody"><div class="t-pname">Кросівки білі</div><div class="t-pbrand">Nike</div><div class="t-pfoot"><div><span class="t-pprice">3 399₴</span><span class="t-pold">3 999₴</span></div><button class="t-add">+</button></div></div></div>
+          <div class="t-card"><span class="t-wish">🤍</span><div class="t-pimg">👜</div><div class="t-pbody"><div class="t-pname">Сумка шопер</div><div class="t-pbrand">Mango</div><div class="t-pfoot"><div><span class="t-pprice">1 199₴</span></div><button class="t-add">+</button></div></div></div>
+        </div>
+      </div>
+
+      <div class="t-banners">
+        <div class="t-banner b1"><div><h3>Розпродаж до −50%</h3><p>Тільки до кінця тижня</p></div><span class="t-banner-link">Перейти до Sale →</span></div>
+        <div class="t-banner b2"><div><h3>Нова колекція вже тут</h3><p>Весна / Літо 2026</p></div><span class="t-banner-link">Дивитись →</span></div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+function setTheme(mode, btn) {
+  document.querySelectorAll('.ws-demo').forEach(el => {
+    el.className = 'ws-demo' + (mode === 'light' ? ' light' : '');
+  });
+  document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+</script>

@@ -22,7 +22,10 @@ public class UserMapper : Profile
         CreateMap<GoogleUserModel, UserEntity>()
             .ForMember(x => x.Image, opt => opt.Ignore())
             .ForMember(x => x.UserName, opt => opt.MapFrom(x=>x.UserName));
-
+        
+        CreateMap<EditProfileModel, UserEntity>()
+            .ForMember(x => x.Image, opt => opt.Ignore())
+            .ForAllMembers(opt => opt.Condition((src, dest, srcMember) => srcMember != null)); 
 
     }
 }

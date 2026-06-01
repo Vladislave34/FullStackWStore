@@ -8,7 +8,11 @@ public class ProductEntity : BaseEntity<Guid>
     [Required]
     public string Name { get; set; }
     [Required]
+    public string NameUk { get; set; }
+    [Required]
     public string Description { get; set; }
+    [Required]
+    public string DescriptionUk { get; set; }
     
     
     [ForeignKey(nameof(CategoryEntity))]

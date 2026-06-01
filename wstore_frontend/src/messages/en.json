@@ -1,0 +1,62 @@
+{
+  "nav": {
+    "women": "Women",
+    "men": "Men",
+    "sale": "Sale"
+  },
+  "hero": {
+    "collection": "New Collection 2026",
+    "title": "Dress the way you feel",
+    "subtitle": "Stylish clothing for every day — from casual to evening looks.",
+    "btn": "View Collection",
+    "sale": "Sale up to -50%",
+    "season": "Spring / Summer 2026",
+    "categories": {
+      "all": "All"
+    }
+  },
+  "products": {
+    "title": "Popular items",
+    "seeAll": "See all"
+  },
+  "guestmenu": {
+    "login" : "Login",
+    "register" : "Register"
+  },
+  "authorizemenu" : {
+    "myorders" : "My orders",
+    "profile" : "Profile",
+    "logout" : "Logout"
+  },
+  "loginform": {
+    "title": "Sign in to your account",
+    "subtitle": "Enter your details to continue",
+    "email": "Email",
+    "password": "Password",
+    "forgot": "Forgot password?",
+    "submit": "Sign in"
+  },
+  "registerform": {
+    "title": "Registration",
+    "subtitle": "Enter your details to continue",
+    "firstname": "First Name",
+    "lastname": "Last Name",
+    "avatar": "Avatar",
+    "upload": "Upload photo",
+    "username": "Username",
+    "email": "Email",
+    "password": "Password",
+    "submit": "Register"
+  },
+  "storecreateform": {
+    "title": "Create Store",
+    "subtitle": "Enter details to continue",
+    "name_label": "Name",
+    "name_placeholder": "Name",
+    "description_label": "Description",
+    "description_placeholder": "Description",
+    "avatar_label": "Avatar",
+    "upload_text": "Upload photos (multiple allowed)",
+    "submit": "Create"
+  }
+}

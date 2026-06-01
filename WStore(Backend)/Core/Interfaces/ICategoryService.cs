@@ -9,7 +9,7 @@ public interface ICategoryService
     Task RemoveCategory(Guid id);
     Task RemoveAllCategories();
     
-    Task<IEnumerable<CategoryItemModel>> GetAllCategories();
+    Task<IEnumerable<CategoryItemModel>> GetAllCategories(string lang);
     
-    Task<CategoryItemModel> GetCategoryById(Guid id);
+    Task<CategoryItemModel> GetCategoryById(Guid id, string lang);
 }

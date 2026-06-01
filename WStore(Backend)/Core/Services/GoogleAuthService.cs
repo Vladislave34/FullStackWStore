@@ -17,7 +17,7 @@ public class GoogleAuthService(IJwtTokenService tokenService,
    IEmailSender smtpService
 ) : IGoogleAuthService
 {
-   public async Task<string> LoginByGoogleAsync(string token)
+   public async Task<AuthResponseModel> LoginByGoogleAsync(string token)
    {
       using (var httpClient = new HttpClient())
       {
@@ -42,7 +42,8 @@ public class GoogleAuthService(IJwtTokenService tokenService,
             {
                await userManager.AddLoginAsync(existingUser, new UserLoginInfo("Google", googleUser.GogoleId, "Google"));
             }
-            var jwtToken = await tokenService.CreateToken(existingUser);
+
+            var jwtToken = await tokenService.CreateAuthResponse(existingUser);
             return jwtToken;
          }
          else
@@ -62,10 +63,10 @@ public class GoogleAuthService(IJwtTokenService tokenService,
                   displayName: "Google"
                ));
                await userManager.AddToRoleAsync(user, "User");
-               var jwtToken = await tokenService.CreateToken(user);
+               var jwtToken = await tokenService.CreateAuthResponse(existingUser);;
                return jwtToken;
             }
-            return String.Empty;
+            return null;
          }
       }
    }

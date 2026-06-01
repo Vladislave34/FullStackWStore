@@ -1,8 +1,9 @@
 using Core.Models.Color;
+using Core.Models.User;
 
 namespace Core.Interfaces;
 
 public interface IGoogleAuthService
 {
-    Task<string> LoginByGoogleAsync(string token);
+    Task<AuthResponseModel> LoginByGoogleAsync(string token);
 }

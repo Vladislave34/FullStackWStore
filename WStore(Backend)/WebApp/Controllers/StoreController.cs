@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace WebApplication1.Controlers;
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Roles = "StoreOwner, Admin")]
+//[Authorize(Roles = "StoreOwner, Admin")]
 public class StoreController(IStoreService storeService) : ControllerBase
 {
     [HttpGet("Stores")]
@@ -23,13 +23,19 @@ public class StoreController(IStoreService storeService) : ControllerBase
         var store = await storeService.GetStoreById(id);
         return Ok(store);
     }
+    [HttpGet("StoreByUserId")]
+    public async Task<IActionResult> GetStoreByUserId()
+    {
+        var store = await storeService.GetStoreByUserId();
+        return Ok(store);
+    }
 
     [HttpPost("Add")]
-    
+    [Authorize]
     public async Task<IActionResult> AddStore([FromForm] StoreAddUpdateModel model)
     {
-        await storeService.AddStore(model);
-        return Ok();
+        var res = await storeService.AddStore(model);
+        return Ok(res);
     }
 
     [HttpPut("Update/{id}")]

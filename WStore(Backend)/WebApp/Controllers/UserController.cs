@@ -16,7 +16,7 @@ public class UserController
     ) : ControllerBase
 {
     [HttpPost]
-    public async Task<IActionResult> Login([FromForm] LoginModel model)
+    public async Task<IActionResult> Login([FromBody] LoginModel model)
     {
         var user = await userManager.FindByEmailAsync(model.Email);
         if (user == null || !await userManager.CheckPasswordAsync(user, model.Password))
@@ -54,6 +54,16 @@ public class UserController
         var response = await jwtTokenService.CreateAuthResponse(user);
         return Ok(response);
     }
+
+    [HttpPost]
+    [Authorize]
+    [Consumes("multipart/form-data")]
+    public async Task<IActionResult> EditProfile([FromForm] EditProfileModel model)
+    {
+        var response = await userService.EditProfileAsync(model);
+        return Ok(response); 
+    }
+    
     [HttpPost]
     public async Task<IActionResult> Refresh([FromBody] RefreshTokenRequestModel model)
     {
@@ -84,11 +94,11 @@ public class UserController
     [HttpPost]
     public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginRequestModel model)
     {
-        var token = await googleAuthService.LoginByGoogleAsync(model.IdToken);
-        if (string.IsNullOrEmpty(token))
+        var result = await googleAuthService.LoginByGoogleAsync(model.IdToken);
+        if (result == null)
             return BadRequest(new { Status = 400, Errors = new { Email = "Помилка реєстрації" } });
 
-        return Ok(new { Token = token });
+        return Ok(result); 
     }
 
     [HttpPost]
