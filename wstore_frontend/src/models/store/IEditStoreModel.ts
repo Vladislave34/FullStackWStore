@@ -3,4 +3,5 @@ export default interface IEditStoreModel {
     name: string;
     description: string;
     images: File[];
+    // existingImages: string[];
 }

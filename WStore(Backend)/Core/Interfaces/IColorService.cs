@@ -9,7 +9,7 @@ public interface IColorService
     Task RemoveColor(Guid id);
     Task RemoveAllColors();
     
-    Task<IEnumerable<ColorItemModel>> GetAllColors();
+    Task<IEnumerable<ColorItemModel>> GetAllColors(string lang);
     
-    Task<ColorItemModel> GetColorById(Guid id);
+    Task<ColorItemModel> GetColorById(Guid id, string lang);
 }

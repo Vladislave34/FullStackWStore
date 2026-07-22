@@ -12,6 +12,7 @@ public class ProductVariantAddUpdateModel
     
 
     public Guid SizeId { get; set; }
+    public Guid? SaleId { get; set; }
     
     
     public decimal Price { get; set; }

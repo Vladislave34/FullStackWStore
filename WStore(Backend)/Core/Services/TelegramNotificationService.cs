@@ -4,7 +4,7 @@ using Telegram.Bot;
 
 namespace Core.Services;
 
-// Core/Services/TelegramNotificationService.cs
+
 public class TelegramNotificationService(IConfiguration config) : ITelegramNotificationService
 {
     private readonly TelegramBotClient _bot = new(config["Telegram:BotToken"]!);

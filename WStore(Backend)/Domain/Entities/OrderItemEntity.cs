@@ -12,4 +12,5 @@ public class OrderItemEntity : BaseEntity<Guid>
     public OrderEntity Order { get; set; }
     public int Quantity { get; set; }
     public decimal Price { get; set; }
+    
 }

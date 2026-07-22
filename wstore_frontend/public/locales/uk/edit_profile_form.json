@@ -1,0 +1,10 @@
+{
+  "personal_details": "Особисті дані",
+  "first_name": "Ім'я",
+  "nickname": "Нікнейм",
+  "last_name": "Прізвище",
+  "email_address": "Email адреса",
+  "primary_email": "Основна пошта",
+  "save_changes": "Зберегти зміни",
+  "saving_changes": "Збереження змін"
+}

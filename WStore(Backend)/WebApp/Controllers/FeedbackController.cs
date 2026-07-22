@@ -6,11 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebApplication1.Controlers;
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/[controller]/[action]")]
 [Authorize(Roles = "StoreOwner, Admin")]
 public class FeedbackController(IFeedbackService feedbackService) : ControllerBase
 {
-    [HttpGet("Feedbacks/{productId}")]
+    [HttpGet("{productId}")]
     [AllowAnonymous]
     public async Task<IActionResult> GetFeedbacksByProduct(Guid productId)
     {
@@ -18,14 +18,14 @@ public class FeedbackController(IFeedbackService feedbackService) : ControllerBa
         return Ok(variants);
     }
 
-    [HttpGet("Feedback/{id}")]
+    [HttpGet("{id}")]
     public async Task<IActionResult> GetFeedbackById(Guid id)
     {
         var variant = await feedbackService.GetFeedbackById(id);
         return Ok(variant);
     }
 
-    [HttpPost("Add")]
+    [HttpPost]
     
     public async Task<IActionResult> AddFeedback([FromForm] FeedbackAddUpdateModel model)
     {
@@ -33,21 +33,21 @@ public class FeedbackController(IFeedbackService feedbackService) : ControllerBa
         return Ok();
     }
 
-    [HttpPut("Update/{id}")]
+    [HttpPut("{id}")]
     public async Task<IActionResult> UpdateFeedback(Guid id, FeedbackAddUpdateModel model)
     {
         await feedbackService.UpdateFeedback(id, model);
         return Ok();
     }
 
-    [HttpDelete("Delete/{id}")]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteProductVariant(Guid id)
     {
         await feedbackService.RemoveFeedback(id);
         return Ok();
     }
 
-    [HttpDelete("RemoveAll")]
+    [HttpDelete]
     public async Task<IActionResult> RemoveAllFeedbacks()
     {
         await feedbackService.RemoveAllFeedbacks();

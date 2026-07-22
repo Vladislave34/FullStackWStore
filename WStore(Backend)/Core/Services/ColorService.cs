@@ -10,14 +10,15 @@ namespace Core.Services;
 
 public class ColorService(AppStoreContext context, IMapper mapper) : IColorService
 {
-    public async Task<IEnumerable<ColorItemModel>> GetAllColors()
+    public async Task<IEnumerable<ColorItemModel>> GetAllColors(string lang)
     {
-        return
-            await context.Colors
+        
+          var colors =   await context.Colors
                 .Where(d=> d.IsDeleted == false)
                 .ProjectTo<ColorItemModel>(mapper.ConfigurationProvider)
                 .ToListAsync();
-        
+          var localized = colors.Select(x => Localize(x, lang)).ToList();
+          return localized;
     }
 
     public async Task AddColor(ColorAddUpdateModel model)
@@ -51,13 +52,22 @@ public class ColorService(AppStoreContext context, IMapper mapper) : IColorServi
         }
         await context.SaveChangesAsync();
     }
-    public async Task<ColorItemModel> GetColorById(Guid id)
+    public async Task<ColorItemModel> GetColorById(Guid id, string lang)
     {
         var entity = await context.Colors.FirstOrDefaultAsync(x=> x.Id == id && !x.IsDeleted);
         if (entity == null)
         {
             throw new Exception("Product not found");
         }
-        return mapper.Map<ColorItemModel>(entity);
+        var color = mapper.Map<ColorItemModel>(entity);
+        var localized = Localize(color, lang);
+        return localized;
+    }
+    private static ColorItemModel Localize(ColorItemModel model, string lang)
+    {
+        if (lang.StartsWith("uk", StringComparison.OrdinalIgnoreCase))
+            model.Name = model.NameUk ?? model.Name;
+
+        return model;
     }
 }

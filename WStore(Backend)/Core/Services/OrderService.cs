@@ -18,11 +18,13 @@ public class OrderService(
 {
     public async Task AddOrder(OrderAddUpdateModel model)
     {
-        // 1. беремо кошик
+        var userId = await authService.GetUserIdAsync();
+
+        
         var cart = await context.Carts
             .Include(x => x.Items)
             .ThenInclude(x => x.ProductVariant)
-            .FirstOrDefaultAsync(x => x.Id == model.CartId && !x.IsDeleted);
+            .FirstOrDefaultAsync(x => x.UserId == userId && !x.IsDeleted);
 
         if (cart == null)
             throw new Exception("Cart not found");
@@ -40,15 +42,19 @@ public class OrderService(
         // 3. створюємо замовлення
         var order = new OrderEntity
         {
-            UserId = await authService.GetUserIdAsync(),
+            UserId = userId,
             OrderStatusId = pendingStatus.Id,
-            TotalPrice = cart.Items.Sum(x => x.Price * x.Quantity),
-            Items = cart.Items.Select(x => new OrderItemEntity
+            TotalPrice = cart.Items
+                .Where(x => model.CartItemIds.Contains(x.Id))
+                .Sum(x => x.Price),
+            Items = cart.Items.Where(x => model.CartItemIds.Contains(x.Id)).Select(x => new OrderItemEntity
             {
                 ProductVariantId = x.ProductVariantId,
                 Quantity = x.Quantity,
                 Price = x.Price
-            }).ToList()
+            }).ToList(),
+            AdrressId = model.AddressId,
+            PaymentId = model.PaymentId
         };
 
         await context.Orders.AddAsync(order);
@@ -58,18 +64,25 @@ public class OrderService(
         await context.Set<OrderHistoryEntity>().AddAsync(new OrderHistoryEntity
         {
             OrderId = order.Id,
-            StatusId = pendingStatus.Id 
+            StatusId = pendingStatus.Id
         });
 
-        // 5. очищаємо кошик
-        cart.IsDeleted = true;
-        foreach (var cartItem in cart.Items)
+        // 5. очищаємо кошик (тільки вибрані товари)
+        var selectedItems = cart.Items.Where(x => model.CartItemIds.Contains(x.Id)).ToList();
+        foreach (var cartItem in selectedItems)
             cartItem.IsDeleted = true;
+
+        // видаляємо сам кошик, тільки якщо всі товари з нього викуплені
+        //if (cart.Items.All(x => x.IsDeleted))
+        //    cart.IsDeleted = true;
 
         await context.SaveChangesAsync();
 
         // 6. кешуємо
-        await redisService.RemoveAsync("orders:all");
+        await redisService.RemoveByPrefixAsync("orders");
+        await redisService.RemoveByPrefixAsync("order");
+        string cacheKey = $"cartitems:all:{userId}";
+        await redisService.RemoveAsync(cacheKey);
     }
 
     public async Task UpdateOrderStatus(Guid id, UpdateOrderStatusModel model)
@@ -81,17 +94,19 @@ public class OrderService(
         if (order == null)
             throw new Exception("Order not found");
 
-        var status = await context.OrderStatuses.FindAsync(model.StatusId);
+        var status = await context.OrderStatuses.FirstOrDefaultAsync(x => x.Name == model.Status);
         if (status == null)
             throw new Exception("Status not found");
 
-        order.OrderStatusId = model.StatusId;
+
+
+        order.OrderStatusId = status.Id;
 
         // записуємо зміну в історію
         await context.Set<OrderHistoryEntity>().AddAsync(new OrderHistoryEntity
         {
             OrderId = order.Id,
-            StatusId = model.StatusId
+            StatusId = status.Id
         });
 
         await context.SaveChangesAsync();
@@ -105,7 +120,7 @@ public class OrderService(
         }
 
         await redisService.RemoveAsync($"order:{id}");
-        await redisService.RemoveAsync("orders:all");
+        await redisService.RemoveByPrefixAsync($"orders");
     }
 
     public async Task CancelOrder(Guid id)
@@ -134,7 +149,8 @@ public class OrderService(
         await context.SaveChangesAsync();
 
         await redisService.RemoveAsync($"order:{id}");
-        await redisService.RemoveAsync("orders:all");
+        await redisService.RemoveByPrefixAsync($"orders");
+        
     }
 
     public async Task<IEnumerable<OrderItemModel>> GetAllOrders()
@@ -181,6 +197,9 @@ public class OrderService(
             .Include(x => x.Items)
                 .ThenInclude(x => x.ProductVariant)
                     .ThenInclude(x => x.Size)
+            .Include(x => x.Items)
+                .ThenInclude(x => x.ProductVariant)
+                    .ThenInclude(x => x.Image)
             .ProjectTo<OrderItemModel>(mapper.ConfigurationProvider)
             .ToListAsync();
 
@@ -213,5 +232,36 @@ public class OrderService(
         var item = mapper.Map<OrderItemModel>(entity);
         await redisService.SetAsync($"order:{id}", item, TimeSpan.FromMinutes(10));
         return item;
+    }
+    public async Task<IEnumerable<OrderItemModel>> GetOrdersForStore()
+    {
+        var userId = await authService.GetUserIdAsync();
+        var store = await context.Stores.FirstOrDefaultAsync(x => x.OwnerId == userId && !x.IsDeleted);
+        string key = $"orders:store:{store.Id}";
+        
+
+        var cache = await redisService.GetAsync<List<OrderItemModel>>(key);
+        if (cache != null) return cache;
+
+        var items = await context.Orders
+            .Where(x => !x.IsDeleted && x.UserId == store.OwnerId)
+            .Include(x => x.OrderStatus)
+            .Include(x => x.Items)
+            .ThenInclude(x => x.ProductVariant)
+            .ThenInclude(x => x.Product)
+            .Include(x => x.Items)
+            .ThenInclude(x => x.ProductVariant)
+            .ThenInclude(x => x.Color)
+            .Include(x => x.Items)
+            .ThenInclude(x => x.ProductVariant)
+            .ThenInclude(x => x.Size)
+            .Include(x => x.Items)
+            .ThenInclude(x => x.ProductVariant)
+            .ThenInclude(x => x.Image)
+            .ProjectTo<OrderItemModel>(mapper.ConfigurationProvider)
+            .ToListAsync();
+
+        await redisService.SetAsync(key, items, TimeSpan.FromMinutes(10));
+        return items;
     }
 }

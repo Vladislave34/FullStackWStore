@@ -1,12 +1,13 @@
-import Hero from "@/components/Hero";
-import Section from "@/components/Section";
+import type { Metadata } from 'next'
+import { redirect } from 'next/navigation'
+import {afterWrite} from "@popperjs/core";
+import {getT} from "next-i18next/server";
+
+export const metadata: Metadata = {
+    title: 'WStore',
+}
 
 
-export default function Home() {
-  return (
-    <>
-        <Hero />
-        <Section />
-    </>
-  );
+export default async function RootPage() {
+    redirect(`/en?page=1`)
 }

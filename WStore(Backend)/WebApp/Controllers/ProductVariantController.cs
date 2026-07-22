@@ -5,11 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebApplication1.Controlers;
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/[controller]/[action]")]
 [Authorize(Roles = "StoreOwner, Admin")]
 public class ProductVariantController(IProductVariantServices productVariantServices) : ControllerBase
 {
-    [HttpGet("ProductVariants/{productId}")]
+    [HttpGet("{productId}")]
     [AllowAnonymous]
     public async Task<IActionResult> GetProductVariants(Guid productId)
     {
@@ -17,14 +17,14 @@ public class ProductVariantController(IProductVariantServices productVariantServ
         return Ok(variants);
     }
 
-    [HttpGet("ProductVariant/{id}")]
+    [HttpGet("{id}")]
     public async Task<IActionResult> GetProductVariantById(Guid id)
     {
         var variant = await productVariantServices.GetProductVariantById(id);
         return Ok(variant);
     }
 
-    [HttpPost("Add")]
+    [HttpPost]
     
     public async Task<IActionResult> AddProductVariant([FromForm] ProductVariantAddUpdateModel model)
     {
@@ -32,21 +32,21 @@ public class ProductVariantController(IProductVariantServices productVariantServ
         return Ok();
     }
 
-    [HttpPut("Update/{id}")]
+    [HttpPut("{id}")]
     public async Task<IActionResult> UpdateProductVariant(Guid id, ProductVariantAddUpdateModel model)
     {
         await productVariantServices.UpdateProductVariant(id, model);
         return Ok();
     }
 
-    [HttpDelete("Delete/{id}")]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteProductVariant(Guid id)
     {
         await productVariantServices.RemoveProductVariant(id);
         return Ok();
     }
 
-    [HttpDelete("RemoveAll")]
+    [HttpDelete]
     public async Task<IActionResult> RemoveAllProductVariants()
     {
         await productVariantServices.RemoveAllProductVariants();

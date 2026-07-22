@@ -1,0 +1,10 @@
+{
+  "Pending": "Очікує",
+  "Confirmed": "Підтверджено",
+  "Processing": "В обробці",
+  "Shipped": "Відправлено",
+  "Delivered": "Доставлено",
+  "Cancelled": "Скасовано",
+  "Refunded": "Повернено",
+  "Failed": "Помилка"
+}

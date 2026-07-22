@@ -2,6 +2,8 @@ using AutoMapper;
 using Core.Interfaces;
 using Domain;
 using Domain.Entities;
+using Domain.Entities.Identity;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace Core.Seeder;
@@ -9,12 +11,15 @@ namespace Core.Seeder;
 
 public static class DataSeeder
 {
-    public static async Task SeedAsync(AppStoreContext context, IRedisService redisService, IMapper mapper, IMinioImageService imageService, ISearchService searchService)
+    public static async Task SeedAsync(AppStoreContext context, IRedisService redisService, IMapper mapper, IMinioImageService imageService, ISearchService searchService, UserManager<UserEntity> userManager)
     {
         await SeedSizesAsync(context, redisService, mapper);
         await SeedColorsAsync(context, redisService, mapper);
         await SeedCategoriesAsync(context, imageService, redisService); 
-        await SeedProductsAsync(context, redisService, searchService);
+        await SeedStore(context, imageService, redisService, userManager);
+        await SeedGenders(context, redisService);
+        await SeedSales(context, redisService);
+        //await SeedProductsAsync(context, redisService, searchService);
     }
 
     private static async Task SeedSizesAsync(AppStoreContext context, IRedisService redisService, IMapper mapper)
@@ -55,20 +60,20 @@ public static class DataSeeder
 
         var colors = new[]
         {
-            new ColorEntity { Name = "Чорний",   Hex = "#000000" },
-            new ColorEntity { Name = "Білий",    Hex = "#FFFFFF" },
-            new ColorEntity { Name = "Сірий",    Hex = "#808080" },
-            new ColorEntity { Name = "Червоний", Hex = "#FF0000" },
-            new ColorEntity { Name = "Синій",    Hex = "#0000FF" },
-            new ColorEntity { Name = "Зелений",  Hex = "#008000" },
-            new ColorEntity { Name = "Жовтий",   Hex = "#FFFF00" },
-            new ColorEntity { Name = "Помаранч", Hex = "#FFA500" },
-            new ColorEntity { Name = "Рожевий",  Hex = "#FFC0CB" },
-            new ColorEntity { Name = "Фіолет",   Hex = "#800080" },
-            new ColorEntity { Name = "Бежевий",  Hex = "#F5F5DC" },
-            new ColorEntity { Name = "Коричнев", Hex = "#8B4513" },
-            new ColorEntity { Name = "Темно-синій", Hex = "#000080" },
-            new ColorEntity { Name = "Хакі",     Hex = "#808000" },
+            new ColorEntity { Name = "Black",       NameUk = "Чорний",      Hex = "#000000" },
+            new ColorEntity { Name = "White",       NameUk = "Білий",       Hex = "#FFFFFF" },
+            new ColorEntity { Name = "Gray",        NameUk = "Сірий",       Hex = "#808080" },
+            new ColorEntity { Name = "Red",         NameUk = "Червоний",    Hex = "#FF0000" },
+            new ColorEntity { Name = "Blue",        NameUk = "Синій",       Hex = "#0000FF" },
+            new ColorEntity { Name = "Green",       NameUk = "Зелений",     Hex = "#008000" },
+            new ColorEntity { Name = "Yellow",      NameUk = "Жовтий",      Hex = "#FFFF00" },
+            new ColorEntity { Name = "Orange",      NameUk = "Помаранчевий",Hex = "#FFA500" },
+            new ColorEntity { Name = "Pink",        NameUk = "Рожевий",     Hex = "#FFC0CB" },
+            new ColorEntity { Name = "Purple",      NameUk = "Фіолетовий",  Hex = "#800080" },
+            new ColorEntity { Name = "Beige",       NameUk = "Бежевий",     Hex = "#F5F5DC" },
+            new ColorEntity { Name = "Brown",       NameUk = "Коричневий",  Hex = "#8B4513" },
+            new ColorEntity { Name = "Navy",        NameUk = "Темно-синій", Hex = "#000080" },
+            new ColorEntity { Name = "Khaki",       NameUk = "Хакі",        Hex = "#808000" },
         };
 
         await context.Colors.AddRangeAsync(colors);
@@ -169,6 +174,59 @@ public static class DataSeeder
 
         await redisService.RemoveAsync("products:all:en");
         await redisService.RemoveAsync("products:all:uk");
+    }
+
+    private static async Task SeedStore(AppStoreContext context, IMinioImageService imageService, IRedisService redisService, UserManager<UserEntity> userManager)
+    {
+        
+        if(context.Stores.Any()) return;
+        var admin = await userManager.FindByEmailAsync("ostapchukvladislav77@gmail.com");
+        var store = new StoreEntity
+        {
+            Name = "VladStore",
+            Description = "The Best Store and the lowest price",
+            OwnerId = admin.Id,
+        };
+        await context.Stores.AddAsync(store);
+        userManager.AddToRoleAsync(admin, "StoreOwner").Wait();
+        await context.SaveChangesAsync();
+        await redisService.RemoveByPrefixAsync("stores"); 
+    }
+
+    private static async Task SeedGenders(AppStoreContext context, IRedisService redisService)
+    {
+        if(context.Genders.Any()) return;
+        
+        var list = new List<GenderEntity>
+        {
+            new GenderEntity() { Name = "Men", NameUk = "Чоловіки" },
+            new GenderEntity() {Name = "Women", NameUk = "Жінки"},
+            new GenderEntity() {Name = "Unisex", NameUk = "Унісекс"}
+        };
+        await context.AddRangeAsync(list);
+        await context.SaveChangesAsync();
+        await redisService.RemoveAsync("genders:all:en");
+        await redisService.RemoveAsync("genders:all:uk");
+    }
+
+    private static async Task SeedSales(AppStoreContext context, IRedisService redisService)
+    {
+        if(context.Sales.Any()) return;
+        var list = new List<SaleEntity>
+        {
+            new SaleEntity() { Percent = 5 },
+            new SaleEntity() { Percent = 10 },
+            new SaleEntity() { Percent = 15 },
+            new SaleEntity() { Percent = 20 },
+            new SaleEntity() { Percent = 25 },
+            new SaleEntity() { Percent = 30 },
+            new SaleEntity() { Percent = 40 },
+            new SaleEntity() { Percent = 50 },
+        };
+        await context.AddRangeAsync(list);
+        await context.SaveChangesAsync();
+        await redisService.RemoveAsync("sales:all");
+        await redisService.RemoveAsync("sales:all");
     }
     
 }

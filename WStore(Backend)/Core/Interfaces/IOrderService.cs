@@ -11,4 +11,6 @@ public interface IOrderService
     Task<IEnumerable<OrderItemModel>> GetAllOrders();
     Task<IEnumerable<OrderItemModel>> GetMyOrders();
     Task<OrderItemModel> GetOrderById(Guid id);
+    Task<IEnumerable<OrderItemModel>> GetOrdersForStore();
+
 }

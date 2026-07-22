@@ -1,153 +1,290 @@
+using AutoMapper;
 using Core.Interfaces;
+using Core.Models.CartItem;
 using Core.Models.Product;
+using Domain;
 using Domain.Entities;
+using Microsoft.EntityFrameworkCore;
 using Nest;
 
 namespace Core.Services;
 
-public class SearchService(IElasticClient elasticClient) : ISearchService
+public class SearchService(IElasticClient elasticClient, IMapper mapper, AppStoreContext context) : ISearchService
 {
     private const string Index = "products";
+    private const string IndexCartItem = "cart-items";
 
     public async Task IndexProductAsync(ProductEntity product)
     {
-        var model = new ProductSearchModel
+        var doc = mapper.Map<ProductSearchModel>(product);
+        
+        var response = await elasticClient.IndexAsync(doc,  idx => 
+            idx.Index(Index).Id(product.Id)
+            );
+        if (!response.IsValid)
         {
-            Id = product.Id,
-            Name = product.Name,
-            NameUk = product.NameUk,
-            Description = product.Description,
-            DescriptionUk = product.DescriptionUk,
-            CategoryName = product.CategoryEntity?.Name,
-            CategoryNameUk = product.CategoryEntity?.NameUk,
-            StoreName = product.Store?.Name,
-            MinPrice = product.Variants.Any()
-                ? product.Variants.Min(v => v.Price)
-                : 0,
-            Colors = product.Variants
-                .Select(v => v.Color?.Name)
-                .Where(x => x != null)
-                .Distinct()
-                .ToList()!,
-            Sizes = product.Variants
-                .Select(v => v.Size?.Name)
-                .Where(x => x != null)
-                .Distinct()
-                .ToList()!
-        };
-
-        await elasticClient.IndexAsync(model, i => i.Index(Index));
+            
+            throw new Exception($"Не вдалося проіндексувати товар {product.Id}");
+        }
     }
-
-    public async Task<List<ProductSearchModel>> SearchAsync(
-        string query,
-        string lang = "en",
-        string? category = null,
-        decimal? minPrice = null,
-        decimal? maxPrice = null)
+    public async Task ReindexAllAsync()
     {
-        bool isUk = lang.StartsWith("uk", StringComparison.OrdinalIgnoreCase);
+        var products = await context.Products
+            .Include(p => p.Variants)
+            .ToListAsync();
 
-        var result = await elasticClient.SearchAsync<ProductSearchModel>(s => s
-            .Index(Index)
-            .Query(q => q
-                .Bool(b =>
-                {
-                    if (!string.IsNullOrEmpty(query))
-                    {
-                        b.Must(m => m
-                            .MultiMatch(mm =>
-                            {
-                                if (isUk)
-                                    mm.Fields(f => f
-                                        .Field(p => p.NameUk, boost: 3)
-                                        .Field(p => p.DescriptionUk)
-                                        .Field(p => p.CategoryNameUk));
-                                else
-                                    mm.Fields(f => f
-                                        .Field(p => p.Name, boost: 3)
-                                        .Field(p => p.Description)
-                                        .Field(p => p.CategoryName));
+        foreach (var product in products)
+        {
+            await IndexProductAsync(product);
+        }
+    }
+    public async Task EnsureIndexCreatedAsync()
+    {
+        var existsResponse = await elasticClient.Indices.ExistsAsync(Index);
+        if (existsResponse.Exists)
+            return;
 
-                                return mm.Query(query).Fuzziness(Fuzziness.EditDistance(1));
-                            })
-                        );
-                    }
-                    else
-                    {
-                        b.Must(m => m.MatchAll());
-                    }
-
-                    if (!string.IsNullOrEmpty(category))
-                    {
-                        if (isUk)
-                            b.Filter(f => f
-                                .Term(t => t
-                                    .Field(p => p.CategoryNameUk.Suffix("keyword"))
-                                    .Value(category)));
-                        else
-                            b.Filter(f => f
-                                .Term(t => t
-                                    .Field(p => p.CategoryName.Suffix("keyword"))
-                                    .Value(category)));
-                    }
-
-                    if (minPrice.HasValue || maxPrice.HasValue)
-                        b.Filter(f => f
-                            .Range(r => r
-                                .Field(p => p.MinPrice)
-                                .GreaterThanOrEquals((double?)minPrice)
-                                .LessThanOrEquals((double?)maxPrice)));
-
-                    return b;
-                })
+        var createResponse = await elasticClient.Indices.CreateAsync(Index, c => c
+            .Map<ProductSearchModel>(m => m
+                .Properties(p => p
+                    .Keyword(k => k.Name(n => n.CategoryId))
+                    .Keyword(k => k.Name(n => n.GenderId))
+                    .Keyword(k => k.Name(n => n.StoreId))
+                    .Nested<ProductVariantSearchModel>(n => n
+                        .Name(x => x.Variants)
+                        .Properties(pp => pp
+                            .Keyword(k => k.Name(v => v.ColorId))
+                            .Keyword(k => k.Name(v => v.SizeId))
+                        )
+                    )
+                )
             )
-            .Sort(s => s.Descending(SortSpecialField.Score))
-            .Size(100)
         );
 
-        var documents = result.Documents.ToList();
+        if (!createResponse.IsValid)
+            throw new Exception($"Не вдалося створити індекс: {createResponse.DebugInformation}");
+    }
 
-        if (isUk)
+    public async Task IndexCartItemAsync(CartItemEntity cartItem)
+    {
+        var entity = await context.CartItems
+            .Include(x=>x.ProductVariant)
+            .Include(x=>x.ProductVariant.Color)
+            .Include(x=>x.ProductVariant.Size)
+            .Include(x=>x.ProductVariant.Sale)
+            .Include(x=>x.ProductVariant.Image)
+            .Include(x=>x.ProductVariant.Product)
+            .FirstOrDefaultAsync(x=> x.Id == cartItem.Id && !x.IsDeleted);
+        var doc = mapper.Map<CartItemItemModel>(entity);
+        var response = await elasticClient.IndexAsync(doc, idx =>
+            idx.Index(IndexCartItem).Id(cartItem.Id)
+        );
+        if (!response.IsValid)
         {
-            documents.ForEach(d =>
-            {
-                d.Name = d.NameUk ?? d.Name;
-                d.Description = d.DescriptionUk ?? d.Description;
-                d.CategoryName = d.CategoryNameUk ?? d.CategoryName;
-            });
+            
+            throw new Exception($"Не вдалося проіндексувати товар {cartItem.Id}");
         }
 
-        return documents;
     }
 
-    public async Task<List<string>> AutocompleteAsync(string prefix, string lang = "en")
+    public async Task<(List<Guid> Ids, int TotalCount)> SearchAsync(
+        string query, string lang, Guid? storeId, Guid? categoryId, int pageNumber, int pageSize)
     {
-        bool isUk = lang.StartsWith("uk", StringComparison.OrdinalIgnoreCase);
+        Console.WriteLine($"[DEBUG ENTER] query={query}, lang={lang}, storeId={storeId}, categoryId={categoryId}");
+    
+       
+    
+        
+        var nameField = lang.StartsWith("uk") ? "nameUk" : "name";
+        var descField = lang.StartsWith("uk") ? "descriptionUk" : "description";
 
-        var result = await elasticClient.SearchAsync<ProductSearchModel>(s => s
+        var filters = new List<Func<QueryContainerDescriptor<ProductSearchModel>, QueryContainer>>();
+
+        if (storeId.HasValue)
+            filters.Add(f => f.Term(t => t
+                .Field("storeId.keyword")
+                .Value(storeId.Value.ToString())));
+
+        if (categoryId.HasValue)
+            filters.Add(f => f.Term(t => t
+                .Field("categoryId.keyword")
+                .Value(categoryId.Value.ToString())));
+
+        var response = await elasticClient.SearchAsync<ProductSearchModel>(s => s
             .Index(Index)
-            .Query(q => q
-                .MatchPhrasePrefix(m =>
-                {
-                    if (isUk)
-                        m.Field(f => f.NameUk).Query(prefix);
-                    else
-                        m.Field(f => f.Name).Query(prefix);
+            .From((pageNumber - 1) * pageSize)
+            .Size(pageSize)
+            .Query(q => q.Bool(b => b
+                .Must(m => m.MultiMatch(mm => mm
+                    .Query(query)
+                    .Fields(new[] { $"{nameField}^2", descField })
+                    .Fuzziness(Fuzziness.Auto)))
+                .Filter(filters.ToArray())
+            ))
+        );
+        Console.WriteLine($"[DEBUG QUERY] {response.ApiCall.HttpMethod} {response.ApiCall.Uri}");
+        Console.WriteLine($"[DEBUG BODY] {(response.ApiCall.RequestBodyInBytes != null ? System.Text.Encoding.UTF8.GetString(response.ApiCall.RequestBodyInBytes) : "EMPTY")}");
 
-                    return m;
-                })
-            )
-            .Size(5)
+
+        if (!response.IsValid)
+            throw new Exception($"Помилка пошуку: {response.DebugInformation}");
+
+        var ids = response.Documents.Select(d => d.Id).ToList();
+        Console.WriteLine($"[DEBUG RESULT] ids.Count={ids.Count}, total={response.Total}");
+        return (ids, (int)response.Total);
+    }
+    /*
+    public async Task<(List<Guid> Ids, int TotalCount)> SearchAsync(
+        string? query, string lang, Guid? categoryId, Guid? genderId, int a, int pageNumber, int pageSize)
+    {
+        var nameField = lang.StartsWith("uk") ? "nameUk" : "name";
+        var descField = lang.StartsWith("uk") ? "descriptionUk" : "description";
+
+        var filters = new List<Func<QueryContainerDescriptor<ProductSearchModel>, QueryContainer>>();
+
+        if (categoryId.HasValue)
+            filters.Add(f => f.Term(t => t
+                .Field("categoryId.keyword")
+                .Value(categoryId.Value.ToString())));
+
+        if (genderId.HasValue)
+            filters.Add(f => f.Term(t => t
+                .Field("genderId.keyword")
+                .Value(genderId.Value.ToString())));
+
+        
+
+        var response = await elasticClient.SearchAsync<ProductSearchModel>(s => s
+            .Index(Index)
+            .From((pageNumber - 1) * pageSize)
+            .Size(pageSize)
+            .Query(q => q.Bool(b =>
+            {
+                b.Filter(filters.ToArray());
+
+                if (!string.IsNullOrWhiteSpace(query))
+                {
+                    b.Must(m => m.MultiMatch(mm => mm
+                        .Query(query)
+                        .Fields(new[] { $"{nameField}^2", descField })
+                        .Fuzziness(Fuzziness.Auto)));
+                }
+                else
+                {
+                    b.Must(m => m.MatchAll());
+                }
+
+                return b;
+            }))
         );
 
-        return isUk
-            ? result.Documents.Select(x => x.NameUk ?? x.Name).ToList()
-            : result.Documents.Select(x => x.Name).ToList();
+        if (!response.IsValid)
+            throw new Exception($"Помилка пошуку: {response.DebugInformation}");
+
+        var ids = response.Documents.Select(d => d.Id).ToList();
+        return (ids, (int)response.Total);
+    }*/
+    
+    public async Task<(List<Guid> Ids, int TotalCount)> SearchAsync(
+    string? query, string lang, Guid? categoryId, Guid? genderId,
+    Guid? colorId, Guid? sizeId,
+    int pageNumber, int pageSize)
+{
+    var nameField = lang.StartsWith("uk") ? "nameUk" : "name";
+    var descField = lang.StartsWith("uk") ? "descriptionUk" : "description";
+
+    var filters = new List<Func<QueryContainerDescriptor<ProductSearchModel>, QueryContainer>>();
+
+    if (categoryId.HasValue)
+        filters.Add(f => f.Term(t => t
+            .Field(p => p.CategoryId)
+            .Value(categoryId.Value)));
+
+    if (genderId.HasValue)
+        filters.Add(f => f.Term(t => t
+            .Field(p => p.GenderId)
+            .Value(genderId.Value)));
+
+    if (colorId.HasValue || sizeId.HasValue)
+    {
+        filters.Add(f => f.Nested(n => n
+            .Path(p => p.Variants)
+            .Query(nq => nq.Bool(nb =>
+            {
+                var variantFilters = new List<Func<QueryContainerDescriptor<ProductSearchModel>, QueryContainer>>();
+
+                if (colorId.HasValue)
+                    variantFilters.Add(vf => vf.Term(t => t
+                        .Field("variants.colorId")
+                        .Value(colorId.Value)));
+
+                if (sizeId.HasValue)
+                    variantFilters.Add(vf => vf.Term(t => t
+                        .Field("variants.sizeId")
+                        .Value(sizeId.Value)));
+
+                nb.Filter(variantFilters.ToArray());
+                return nb;
+            }))
+        ));
     }
 
+    var response = await elasticClient.SearchAsync<ProductSearchModel>(s => s
+        .Index(Index)
+        .From((pageNumber - 1) * pageSize)
+        .Size(pageSize)
+        .Query(q => q.Bool(b =>
+        {
+            b.Filter(filters.ToArray());
+
+            if (!string.IsNullOrWhiteSpace(query))
+            {
+                b.Must(m => m.MultiMatch(mm => mm
+                    .Query(query)
+                    .Fields(new[] { $"{nameField}^2", descField })
+                    .Fuzziness(Fuzziness.Auto)));
+            }
+            else
+            {
+                b.Must(m => m.MatchAll());
+            }
+
+            return b;
+        }))
+    );
+
+    if (!response.IsValid)
+        throw new Exception($"Помилка пошуку: {response.DebugInformation}");
+
+    var ids = response.Documents.Select(d => d.Id).ToList();
+    return (ids, (int)response.Total);
+}
+
+    public async Task<(List<Guid> Ids, int TotalCount)> SearchCartItemAsync(
+        string query, string lang, int pageNumber, int pageSize)
+    {
+        var nameField = lang.StartsWith("uk") ? "nameUk" : "name";
+
+        var response = await elasticClient.SearchAsync<CartItemItemModel>(s => s
+            .Index(IndexCartItem)
+            .From((pageNumber - 1) * pageSize)
+            .Size(pageSize)
+            .Query(q => q.Match(mm => mm
+                .Field(nameField)
+                .Query(query)
+                .Fuzziness(Fuzziness.Auto)))
+        );
+
+        if (!response.IsValid)
+            throw new Exception($"Помилка пошуку: {response.DebugInformation}");
+
+        var ids = response.Documents.Select(d => d.Id).ToList();
+        return (ids, (int)response.Total);
+    }
+    
+    
     public async Task DeleteProductAsync(Guid id)
     {
-        await elasticClient.DeleteAsync<ProductSearchModel>(id, d => d.Index(Index));
+        await elasticClient.DeleteAsync<ProductEntity>(id, idx=>idx.Index(Index));
     }
 }

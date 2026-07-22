@@ -11,7 +11,7 @@ namespace Core.Services;
 public class MinioImageService(IAmazonS3 s3Client, IConfiguration  config) : IMinioImageService
 {
     private readonly string _bucketName = config["MinIO:BucketName"]!;
-    private readonly string _endpoint = config["MinIO:Endpoint"]!;
+    private readonly string _endpoint = config["MinIO:PublicEndpoint"]!;
 
 
     public async Task<string> UploadImageAsync(IFormFile file)
@@ -36,7 +36,7 @@ public class MinioImageService(IAmazonS3 s3Client, IConfiguration  config) : IMi
             BucketName = _bucketName,
             Key = key,
             InputStream = outputStream,
-            ContentType = "image/webp" // ← webp
+            ContentType = "image/webp" 
         };
 
         await s3Client.PutObjectAsync(request);

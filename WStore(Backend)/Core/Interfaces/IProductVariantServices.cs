@@ -1,3 +1,4 @@
+using Core.Models.Product;
 using Core.Models.ProductVariant;
 
 namespace Core.Interfaces;

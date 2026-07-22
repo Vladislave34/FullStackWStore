@@ -44,6 +44,14 @@ public class AppStoreContext
     public DbSet<OrderStatusEntity>  OrderStatuses { get; set; }
     public DbSet<FeedbackEntity>   Feedbacks { get; set; }
     
+    public DbSet<GenderEntity>  Genders { get; set; }
+    
+    public DbSet<SaleEntity>  Sales { get; set; }
+    
+    public DbSet<AdrressEntity>   Adrresses { get; set; }
+    
+    public DbSet<PaymentEntity>  Payments { get; set; }
+    
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -64,6 +72,24 @@ public class AppStoreContext
                 .HasForeignKey(ur => ur.RoleId)
                 .IsRequired();
         });
+        builder.Entity<ProductEntity>()
+            .HasMany(p => p.Users)
+            .WithMany(u => u.Favourites)
+            .UsingEntity<Dictionary<string, object>>(
+                "FavouriteProducts",
+                j => j.HasOne<UserEntity>()
+                    .WithMany()
+                    .HasForeignKey("UserId")
+                    .OnDelete(DeleteBehavior.Cascade),
+                j => j.HasOne<ProductEntity>()
+                    .WithMany()
+                    .HasForeignKey("ProductId")
+                    .OnDelete(DeleteBehavior.Cascade),
+                j =>
+                {
+                    j.ToTable("FavouriteProducts");
+                    j.HasKey("UserId", "ProductId");
+                });
         
         
         

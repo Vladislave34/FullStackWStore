@@ -21,5 +21,8 @@ public class UserEntity : IdentityUser<Guid>
     public ICollection<OrderEntity> Orders { get; set; } = new List<OrderEntity>();
     public ICollection<StoreEntity> Stores { get; set; } = new List<StoreEntity>();
     public ICollection<FeedbackEntity> Feedbacks { get; set; } = new List<FeedbackEntity>();
+    public ICollection<ProductEntity> Favourites { get; set; } = new List<ProductEntity>();
+    public ICollection<AdrressEntity>? Addresses { get; set; } = new List<AdrressEntity>();
+    public ICollection<PaymentEntity>? Payments { get; set; } = new List<PaymentEntity>();
 
 }

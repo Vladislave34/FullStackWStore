@@ -5,6 +5,7 @@ import IRegisterModel from "@/models/auth/IRegisterModel";
 import ILoginModel from "@/models/auth/ILoginModel";
 import IJwtResponse from "@/models/auth/IJwtResponse";
 import IEditProfileModel from "@/models/auth/IEditProfileModel";
+import IResetPasswordModel from "@/models/auth/IResetPasswordModel";
 
 export const authApi = createApi({
     reducerPath: 'authApi',
@@ -59,6 +60,20 @@ export const authApi = createApi({
                 body: {idToken : formData},
             }),
             invalidatesTags: ['Auth'],
+        }),
+        forgotPassword: build.mutation<void, {email : string}>({
+            query: (model) =>({
+                url: '/ForgotPassword',
+                method: 'POST',
+                body: model
+            })
+        }),
+        resetPassword: build.mutation<void, IResetPasswordModel>({
+            query: (model)=>({
+                url: "ResetPassword",
+                method: "POST",
+                body: model
+            })
         })
     })
 })

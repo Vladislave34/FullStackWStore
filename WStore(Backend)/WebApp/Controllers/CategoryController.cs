@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApplication1.Controlers;
-[Route("api/[controller]")]
+[Route("api/[controller]/[action]")]
 [ApiController]
 
 [Authorize(Roles = "StoreOwner, Admin")]
@@ -13,7 +13,7 @@ public class CategoryController(ICategoryService categoryService): ControllerBas
     private string Lang =>
         Request.Headers["Accept-Language"].FirstOrDefault() ?? "en";
 
-    [HttpGet("Categories")]
+    [HttpGet]
     [AllowAnonymous]
     public async Task<IActionResult> GetAll()
     {
@@ -21,7 +21,7 @@ public class CategoryController(ICategoryService categoryService): ControllerBas
         return Ok(list);
     }
 
-    [HttpGet("Category/{id}")]
+    [HttpGet("{id}")]
     [AllowAnonymous]
     public async Task<IActionResult> GetById(Guid id)
     {
@@ -29,28 +29,28 @@ public class CategoryController(ICategoryService categoryService): ControllerBas
         return Ok(entity);
     }
 
-    [HttpPost("Add")]
+    [HttpPost]
     public async Task<IActionResult> AddCategory([FromForm] CategoryAddUpdateModel model)
     {
         await categoryService.AddCategory(model);
         return Ok();
     }
 
-    [HttpPut("Update/{id}")]
+    [HttpPut("{id}")]
     public async Task<IActionResult> UpdateCategory(Guid id, [FromForm] CategoryAddUpdateModel model)
     {
         await categoryService.UpdateCategory(id, model);
         return Ok();
     }
 
-    [HttpDelete("Delete/{id}")]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> RemoveCategory(Guid id)
     {
         await categoryService.RemoveCategory(id);
         return Ok();
     }
 
-    [HttpDelete("RemoveAll")]
+    [HttpDelete]
     public async Task<IActionResult> RemoveAllCategories()
     {
         await categoryService.RemoveAllCategories();

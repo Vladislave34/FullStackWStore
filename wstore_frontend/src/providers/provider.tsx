@@ -8,26 +8,28 @@ import {DeviceProvider} from "@/providers/deviceProvider";
 import {setupStore} from "@/store";
 import {Provider} from "react-redux";
 import {GoogleOAuthProvider} from "@react-oauth/google";
-import {NextIntlClientProvider} from "next-intl";
+// import {NextIntlClientProvider} from "next-intl";
+// import {hasLocale} from "next-intl";
+// import {routing} from "@/i18n/routing";
+// import {notFound} from "next/navigation";
 const store = setupStore();
-export default function MainProvider({
+export default  function MainProvider({
                                      children,
-    locale, messages
+
                                  }: {
     children: ReactNode;
-    locale: string;
-    messages: Record<string, unknown>;
+
 
 }) {
 
     return (
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem >
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange >
             <DeviceProvider>
                 <Provider store={store}>
                     <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID!}>
-                {/*<NextIntlClientProvider locale={locale} messages={messages}>*/}
-                {children}
-                {/*</NextIntlClientProvider >*/}
+
+                            {children}
+
                         </GoogleOAuthProvider>
                 </Provider>
             </DeviceProvider>

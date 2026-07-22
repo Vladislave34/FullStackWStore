@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 using Microsoft.OpenApi.Models;
 using Nest;
 using StackExchange.Redis;
@@ -129,6 +130,12 @@ builder.Services.AddScoped<IOrderItemService, OrderItemService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddSingleton<ITelegramNotificationService, TelegramNotificationService>();
 builder.Services.AddScoped<ISearchService, SearchService>();
+builder.Services.AddScoped<IGenderService, GenderService>();
+builder.Services.AddScoped<ISaleService, SaleService>();
+builder.Services.AddScoped<IFavoutiteService, FavoutiteService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
+builder.Services.AddScoped<IAddressService, AddressService>();
+builder.Services.AddScoped<IStatisticService, StatisticService>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 
@@ -218,10 +225,14 @@ using (var serviceScope = app.Services.CreateScope())
     var mapper = serviceScope.ServiceProvider.GetRequiredService<IMapper>();
     var imageService = serviceScope.ServiceProvider.GetRequiredService<IMinioImageService>();
     var searchService = serviceScope.ServiceProvider.GetRequiredService<ISearchService>();
-
-    await DataSeeder.SeedAsync(dbContext, redisService, mapper, imageService, searchService);
+    var userManager = serviceScope.ServiceProvider
+        .GetRequiredService<UserManager<UserEntity>>();
+    
     var roles = new[] {"Admin",  "User", "StoreOwner"};
     var s3 = serviceScope.ServiceProvider.GetRequiredService<IAmazonS3>();
+    //await searchService.EnsureIndexCreatedAsync();
+    //await searchService.ReindexAllAsync();
+    
     try
     {
         await s3.PutBucketPolicyAsync(new PutBucketPolicyRequest
@@ -256,8 +267,7 @@ using (var serviceScope = app.Services.CreateScope())
     }
     if (!dbContext.Users.Any())
     {
-        var userManager = serviceScope.ServiceProvider
-            .GetRequiredService<UserManager<UserEntity>>();
+        
         var adminUser = new UserEntity
         {
             UserName = "admin@gmail.com",
@@ -289,7 +299,8 @@ using (var serviceScope = app.Services.CreateScope())
         await dbContext.OrderStatuses.AddRangeAsync(statuses);
         await dbContext.SaveChangesAsync(); 
     }
+    await DataSeeder.SeedAsync(dbContext, redisService, mapper, imageService, searchService, userManager);
+    
 }
 
 app.Run();
-

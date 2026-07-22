@@ -1,0 +1,14 @@
+{
+  "title": "Create Product",
+  "subtitle": "Create Product for your store",
+  "name": "Name",
+  "name_placeholder": "Product Name",
+  "name_uk": "Name (UK)",
+  "name_uk_placeholder": "Product Name (UK)",
+  "description": "Description",
+  "description_placeholder": "Describe Product Description",
+  "description_uk": "Description (UK)",
+  "description_uk_placeholder": "Describe Product Description (UK)",
+  "select": "Select optional",
+  "submit": "Confirm"
+}

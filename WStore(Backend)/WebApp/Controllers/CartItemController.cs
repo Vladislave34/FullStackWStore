@@ -6,12 +6,14 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApplication1.Controlers;
-[Route("api/[controller]")]
+[Route("api/[controller]/[action]")]
 [ApiController]
 [Authorize(Roles = "StoreOwner, Admin")]
 public class CartItemController(ICartItemService cartItemService) : ControllerBase
 {
-    [HttpGet("CartItems")]
+    private string Lang =>
+        Request.Headers["Accept-Language"].FirstOrDefault() ?? "en";
+    [HttpGet]
     [AllowAnonymous]
     public async Task<IActionResult> GetCartItems()
     {
@@ -19,39 +21,54 @@ public class CartItemController(ICartItemService cartItemService) : ControllerBa
         return Ok(list);
     }
 
-    [HttpGet("CartItem/{id}")]
+    [HttpGet("{id}")]
     public async Task<IActionResult> GetCartItemById(Guid id)
     {
         var entity = await cartItemService.GetCartItemById(id);
         return Ok(entity);
     }
 
-    [HttpPost("Add")]
+    [HttpPost]
+    [AllowAnonymous]
     public async Task<IActionResult> AddCartItem(CartItemAddUpdateModel model)
     {
         await cartItemService.AddCartItem(model);
         return Ok();
     }
 
-    [HttpPut("Update/{id}")]
+    [HttpPut("{id}")]
     public async Task<IActionResult> UpdateCartItem(Guid id, CartItemAddUpdateModel model)
     {
         await cartItemService.UpdateCartItem(id, model);
         return Ok();
     }
 
-    [HttpDelete("Delete/{id}")]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> RemoveCartItem(Guid id)
     {
         await cartItemService.RemoveCartItem(id);
         return Ok();
     }
 
-    [HttpDelete("RemoveAll")]
+    [HttpDelete]
     public async Task<IActionResult> RemoveAllCartItems()
     {
         await cartItemService.RemoveAllCartItems();
         return Ok();
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAllCartItemsByUser()
+    {
+        var list = await cartItemService.GetCartItemsByUser();
+        return Ok(list);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Search(string query, int pageNumber = 1, int pageSize = 10)
+    {
+        var items = await cartItemService.SearchCartItems(query,  Lang, pageNumber, pageSize);
+        return Ok(items);
     }
 
 }

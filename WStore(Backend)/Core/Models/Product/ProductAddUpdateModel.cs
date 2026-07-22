@@ -6,6 +6,7 @@ public class ProductAddUpdateModel
     public string NameUk { get; set; }
     public string? Description { get; set; }
     public string? DescriptionUk { get; set; }
+    public Guid GenderId { get; set; }
     public Guid CategoryId { get; set; }
     public Guid StoreId { get; set; }
 }

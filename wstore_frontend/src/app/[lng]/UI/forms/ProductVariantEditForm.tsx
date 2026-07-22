@@ -1,0 +1,778 @@
+// 'use client'
+// import { FC, useRef, useState } from "react";
+// import { Formik, Form, Field as FormikField, ErrorMessage } from "formik";
+// import * as Yup from "yup";
+// import Image from "next/image";
+// import IProductVariantModel from "@/models/product/variant/IProductVariantModel";
+// import IEditProductVariantModel from "@/models/product/variant/IEditProductVariantModel";
+// import { colorApi } from "@/services/colorService";
+// import { sizeApi } from "@/services/sizeService";
+// import {saleApi} from "@/services/saleService";
+//
+// type IProductVariantEditFormProps = {
+//     productId: string;
+//     productVariant: IProductVariantModel;
+//     onSubmit: (values: IEditProductVariantModel) => Promise<void>;
+//     isLoading?: boolean;
+//     lng: string;
+// };
+//
+// const productVariantSchema = Yup.object({
+//     colorId: Yup.string().required("Колір обов'язковий"),
+//     sizeId: Yup.string().required("Розмір обов'язковий"),
+//     price: Yup.number().required("Ціна обов'язкова").min(0),
+// });
+//
+// const ProductVariantEditForm: FC<IProductVariantEditFormProps> = ({ productId, productVariant, onSubmit, isLoading, lng }) => {
+//     const fileInputRef = useRef<HTMLInputElement>(null);
+//     const [activeIndex, setActiveIndex] = useState(0);
+//     const [existingImages, setExistingImages] = useState<string[]>(productVariant.images ?? []);
+//
+//     const { data: colors } = colorApi.useGetColorsQuery(lng);
+//     const { data: sizes } = sizeApi.useGetSizesQuery();
+//     const {data : sales } = saleApi.useGetAllSalesQuery();
+//     const initialValues: IEditProductVariantModel = {
+//         id: productVariant.id,
+//         productId,
+//         colorId: colors?.find(c => c.name === productVariant.colorName)?.id ?? "",
+//         sizeId: sizes?.find(s => s.name === productVariant.sizeName)?.id ?? "",
+//         saleId: sales?.find(s=>s.percent === productVariant.sale)?.id ?? "",
+//         price: productVariant.price,
+//         images: [],
+//     };
+//
+//     const buildPreviewUrls = (newFiles: File[]) => [
+//         ...existingImages,
+//         ...newFiles.map(f => URL.createObjectURL(f)),
+//     ];
+//
+//     const removeImage = (
+//         index: number,
+//         newFiles: File[],
+//         setFieldValue: (field: string, value: unknown) => void
+//     ) => {
+//         const existingCount = existingImages.length;
+//
+//         if (index < existingCount) {
+//             const updated = existingImages.filter((_, i) => i !== index);
+//             setExistingImages(updated);
+//         } else {
+//             const fileIndex = index - existingCount;
+//             const updated = newFiles.filter((_, i) => i !== fileIndex); // ✅ фільтруємо newFiles
+//             setFieldValue("images", updated);
+//         }
+//
+//         setActiveIndex(prev => {
+//             const newTotal = existingImages.length + newFiles.length - 1;
+//             return prev >= newTotal ? Math.max(newTotal - 1, 0) : prev;
+//         });
+//     };
+//
+//     return (
+//         <Formik
+//             initialValues={initialValues}
+//             validationSchema={productVariantSchema}
+//             enableReinitialize
+//             onSubmit={async (values) => {
+//                 const existingFiles = await Promise.all(
+//                     existingImages.map(async (url, i) => {
+//                         try {
+//                             const res = await fetch(url);
+//                             if (!res.ok) throw new Error(`HTTP ${res.status}`);
+//                             const blob = await res.blob();
+//                             const ext = blob.type.split("/")[1] ?? "webp";
+//                             return new File([blob], `existing_${i}.${ext}`, { type: blob.type });
+//                         } catch (e) {
+//                             console.warn(`Не вдалося завантажити фото ${i}:`, e);
+//                             return null;
+//                         }
+//                     })
+//                 );
+//
+//                 const validExisting = existingFiles.filter((f): f is File => f !== null);
+//
+//                 await onSubmit({
+//                     ...values,
+//                     images: [...validExisting, ...values.images],
+//                 });
+//             }}
+//         >
+//             {({ values, setFieldValue, isSubmitting, submitCount }) => {
+//                 const previewUrls = buildPreviewUrls(values.images);
+//                 const total = previewUrls.length;
+//                 const safeIndex = Math.min(activeIndex, Math.max(total - 1, 0));
+//
+//                 const prev = () => setActiveIndex(i => (i - 1 + total) % total);
+//                 const next = () => setActiveIndex(i => (i + 1) % total);
+//
+//                 return (
+//                     <div className="w-full p-6">
+//                         <Form className="h-full">
+//                             <div className="flex gap-6 items-stretch h-full">
+//
+//
+//                                 <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6 w-[55%]">
+//                                     <p className="m-0 mb-4 text-[13px] font-semibold text-[var(--text)] uppercase tracking-wider">
+//                                         Зображення варіанту
+//                                     </p>
+//
+//                                     {total > 0 ? (
+//                                         <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-[var(--bg)] mb-3">
+//                                             <Image
+//                                                 src={previewUrls[safeIndex]}
+//                                                 alt={`variant image ${safeIndex + 1}`}
+//                                                 fill
+//                                                 className="object-cover"
+//                                                 unoptimized
+//                                             />
+//
+//                                             <button
+//                                                 type="button"
+//                                                 onClick={() => removeImage(safeIndex, values.images, setFieldValue)}
+//                                                 className="absolute top-2 left-2 w-7 h-7 rounded-full bg-black/50 hover:bg-red-500/80 text-white flex items-center justify-center transition-colors"
+//                                             >
+//                                                 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+//                                                     <path d="M18 6 6 18M6 6l12 12"/>
+//                                                 </svg>
+//                                             </button>
+//
+//                                             {total > 1 && (
+//                                                 <>
+//                                                     <button type="button" onClick={prev} className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center transition-colors">‹</button>
+//                                                     <button type="button" onClick={next} className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center transition-colors">›</button>
+//
+//                                                     <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">
+//                                                         {previewUrls.map((_, i) => (
+//                                                             <button
+//                                                                 key={i}
+//                                                                 type="button"
+//                                                                 onClick={() => setActiveIndex(i)}
+//                                                                 className={`h-1.5 rounded-full transition-all ${i === safeIndex ? "bg-white w-3" : "bg-white/50 w-1.5"}`}
+//                                                             />
+//                                                         ))}
+//                                                     </div>
+//                                                 </>
+//                                             )}
+//
+//                                             <span className="absolute top-2 right-2 text-[11px] text-white bg-black/40 px-2 py-0.5 rounded-full">
+//                                                 {safeIndex + 1} / {total}
+//                                             </span>
+//                                         </div>
+//                                     ) : (
+//                                         <div
+//                                             onClick={() => fileInputRef.current?.click()}
+//                                             className="w-full aspect-video rounded-lg border-2 border-dashed border-[var(--border)] flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-blue-500/40 hover:bg-blue-500/5 transition-colors mb-3"
+//                                         >
+//                                             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+//                                                 <rect x="3" y="3" width="18" height="18" rx="2"/>
+//                                                 <circle cx="8.5" cy="8.5" r="1.5"/>
+//                                                 <path d="m21 15-5-5L5 21"/>
+//                                             </svg>
+//                                             <span className="text-[13px] text-[var(--muted)]">Натисніть щоб додати фото</span>
+//                                         </div>
+//                                     )}
+//
+//                                     {total > 0 && (
+//                                         <div className="flex gap-2 flex-wrap">
+//                                             {previewUrls.map((url, i) => (
+//                                                 <div key={i} className="relative group">
+//                                                     <button
+//                                                         type="button"
+//                                                         onClick={() => setActiveIndex(i)}
+//                                                         className={`relative w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${
+//                                                             i === safeIndex ? "border-blue-500" : "border-[var(--border)] opacity-60 hover:opacity-100"
+//                                                         }`}
+//                                                     >
+//                                                         <Image src={url} alt="" fill className="object-cover" unoptimized />
+//                                                     </button>
+//                                                     <button
+//                                                         type="button"
+//                                                         onClick={() => removeImage(i, values.images, setFieldValue)}
+//                                                         className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-red-500 text-white items-center justify-center hidden group-hover:flex transition-all shadow-sm z-10"
+//                                                     >
+//                                                         <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+//                                                             <path d="M18 6 6 18M6 6l12 12"/>
+//                                                         </svg>
+//                                                     </button>
+//                                                 </div>
+//                                             ))}
+//
+//                                             <button
+//                                                 type="button"
+//                                                 onClick={() => fileInputRef.current?.click()}
+//                                                 className="w-16 h-16 rounded-lg border-2 border-dashed border-[var(--border)] flex items-center justify-center text-[var(--muted)] text-xl hover:border-blue-500/40 hover:bg-blue-500/5 transition-colors"
+//                                             >
+//                                                 +
+//                                             </button>
+//                                         </div>
+//                                     )}
+//
+//                                     <input
+//                                         ref={fileInputRef}
+//                                         type="file"
+//                                         accept="image/*"
+//                                         multiple
+//                                         className="hidden"
+//                                         onChange={e => {
+//                                             const files = Array.from(e.target.files ?? []);
+//                                             if (!files.length) return;
+//                                             const updated = [...values.images, ...files];
+//                                             setFieldValue("images", updated);
+//                                             setActiveIndex(existingImages.length + updated.length - 1);
+//                                             e.target.value = "";
+//                                         }}
+//                                     />
+//                                 </div>
+//
+//                                 {/* Поля форми */}
+//                                 <div className="flex flex-col gap-4 w-[45%]">
+//                                     <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6 flex-1">
+//                                         <p className="m-0 mb-4 text-[13px] font-semibold text-[var(--text)] uppercase tracking-wider">
+//                                             Інформація про варіант
+//                                         </p>
+//                                         <div className="flex flex-col gap-4">
+//                                             <SelectField
+//                                                 name="colorId"
+//                                                 label="Колір"
+//                                                 options={colors?.map(c => ({ value: c.id, label: c.name })) ?? []}
+//                                             />
+//                                             <SelectField
+//                                                 name="sizeId"
+//                                                 label="Розмір"
+//                                                 options={sizes?.map(s => ({ value: s.id, label: s.name })) ?? []}
+//                                             />
+//                                             <SelectField
+//                                                 name="saleId"
+//                                                 label="Знижка"
+//                                                 options={sales?.map(s => ({ value: s.id, label: s.percent.toString() })).sort((a,b)=> Number(a.label) - Number(b.label)) ?? []}
+//                                             />
+//                                             <InputField name="price" label="Ціна" placeholder="0.00" type="number" />
+//                                         </div>
+//                                     </div>
+//
+//                                     <div className="flex items-center gap-3">
+//                                         <button
+//                                             type="submit"
+//                                             disabled={isLoading || isSubmitting}
+//                                             className="px-6 py-2.5 rounded-lg text-[14px] bg-[var(--tag)] font-semibold transition-opacity cursor-pointer text-[var(--tag-text)] border border-[var(--border)] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-500/10 hover:border-blue-500/20 hover:text-blue-500 hover:shadow-sm"
+//                                         >
+//                                             {isLoading || isSubmitting ? "Збереження..." : "Зберегти зміни"}
+//                                         </button>
+//
+//                                         {submitCount > 0 && !isSubmitting && !isLoading && (
+//                                             <span className="text-[13px] text-[var(--price)] flex items-center gap-1">
+//                                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+//                                                     <path d="M20 6 9 17l-5-5"/>
+//                                                 </svg>
+//                                                 Збережено
+//                                             </span>
+//                                         )}
+//                                     </div>
+//                                 </div>
+//                             </div>
+//                         </Form>
+//                     </div>
+//                 );
+//             }}
+//         </Formik>
+//     );
+// };
+//
+// const InputField = ({ name, label, placeholder, type = "text" }: { name: string; label: string; placeholder?: string; type?: string }) => (
+//     <div className="flex flex-col gap-1">
+//         <label className="text-[12px] font-medium text-[var(--muted)] uppercase tracking-wide">{label}</label>
+//         <FormikField
+//             name={name}
+//             type={type}
+//             placeholder={placeholder}
+//             className="px-3 py-2 rounded-lg text-[14px] text-[var(--text)] bg-[var(--bg)] border border-[var(--border)] outline-none transition-colors placeholder:text-[var(--muted)] focus:border-[var(--accent-mid)]"
+//         />
+//         <ErrorMessage name={name} component="p" className="text-[11px] text-[var(--sale)] m-0 mt-0.5" />
+//     </div>
+// );
+//
+// const SelectField = ({ name, label, options }: { name: string; label: string; options: { value: string; label: string }[] }) => (
+//     <div className="flex flex-col gap-1">
+//         <label className="text-[12px] font-medium text-[var(--muted)] uppercase tracking-wide">{label}</label>
+//         <FormikField
+//             as="select"
+//             name={name}
+//             className="px-3 py-2 rounded-lg text-[14px] text-[var(--text)] bg-[var(--bg)] border border-[var(--border)] outline-none transition-colors focus:border-[var(--accent-mid)]"
+//         >
+//             <option value=''>оберіть</option>
+//             {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+//         </FormikField>
+//         <ErrorMessage name={name} component="p" className="text-[11px] text-[var(--sale)] m-0 mt-0.5" />
+//     </div>
+// );
+//
+// export default ProductVariantEditForm;
+
+
+'use client'
+import {FC, useEffect, useMemo, useRef, useState} from "react";
+import {
+    Formik,
+    Form,
+    Field as FormikField,
+    ErrorMessage,
+    useField,
+} from "formik";
+import * as Yup from "yup";
+import Image from "next/image";
+import IProductVariantModel from "@/models/product/variant/IProductVariantModel";
+import IEditProductVariantModel from "@/models/product/variant/IEditProductVariantModel";
+import { colorApi } from "@/services/colorService";
+import { sizeApi } from "@/services/sizeService";
+import {saleApi} from "@/services/saleService";
+
+type IProductVariantEditFormProps = {
+    productId: string;
+    productVariant: IProductVariantModel;
+    onSubmit: (values: IEditProductVariantModel) => Promise<void>;
+    isLoading?: boolean;
+    lng: string;
+};
+type SelectFieldProps = {
+    val: {
+        label: string;
+        value: string;
+    } | null;
+    name: string;
+    label: string;
+    options: {
+        value: string;
+        label: string;
+    }[];
+};
+
+const productVariantSchema = Yup.object({
+    colorId: Yup.string().required("Колір обов'язковий"),
+    sizeId: Yup.string().required("Розмір обов'язковий"),
+    price: Yup.number().required("Ціна обов'язкова").min(0),
+});
+
+const ProductVariantEditForm: FC<IProductVariantEditFormProps> = ({ productId, productVariant, onSubmit, isLoading, lng }) => {
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [activeIndex, setActiveIndex] = useState(0);
+    const [existingImages, setExistingImages] = useState<string[]>(productVariant.images ?? []);
+
+    const { data: colors } = colorApi.useGetColorsQuery(lng);
+    const { data: sizes } = sizeApi.useGetSizesQuery();
+    const {data : sales } = saleApi.useGetAllSalesQuery();
+    const isLoaded =
+        colors !== undefined &&
+        sizes !== undefined &&
+        sales !== undefined;
+    const getColorId = () => {
+        if (!colors) return "";
+
+        const color = colors.find(x =>
+            x.name === productVariant.colorName
+        );
+
+        return color?.id ?? "";
+    };
+
+    const getSizeId = () => {
+        if (!sizes) return "";
+
+        const size = sizes.find(x =>
+            x.name === productVariant.sizeName
+        );
+
+        return size?.id ?? "";
+    };
+
+    const getSaleId = () => {
+        if (!sales) return "";
+
+        const sale = sales.find(x =>
+            Number(x.percent) === Number(productVariant.sale)
+        );
+
+        return sale?.id ?? "";
+    };
+    const getColorOpt = ()=>{
+        if (!colors) return null;
+
+        const color = colors.find(x =>
+            x.name === productVariant.colorName
+        )
+        // console.log("dfgd", productVariant.colorNameUk)
+        // console.log(color);
+        if(color === undefined) return null;
+
+        const res = {
+            label : color?.name,
+            value : getColorId()
+        }
+        return res ?? null
+    };
+    const getSizeOpt = ()=>{
+        if (!sizes) return null;
+
+        const size = sizes.find(x =>
+            x.name === productVariant.sizeName
+        );
+        if(size === undefined) return null;
+        const res = {
+            label : size?.name,
+            value : getSizeId()
+        }
+        return res ?? null
+    };
+
+    const getSaleOpt = ()=>{
+        if (!sales) return null;
+
+        const sale = sales.find(x =>
+            Number(x.percent) === Number(productVariant.sale)
+        );
+
+        if(sale === undefined) return null;
+
+        const res = {
+            label : sale?.percent.toString(),
+            value : getSaleId()
+        }
+
+
+        return res ?? null
+    };
+
+
+    const initialValues = useMemo<IEditProductVariantModel>(() => ({
+        id: productVariant.id,
+        productId,
+
+        colorId: getColorId(),
+        sizeId: getSizeId(),
+        saleId: getSaleId(),
+
+        price: productVariant.price,
+        images: [],
+    }), [
+        productVariant,
+        productId,
+        colors,
+        sizes,
+        sales,
+    ]);
+
+    const buildPreviewUrls = (newFiles: File[]) => [
+        ...existingImages,
+        ...newFiles.map(f => URL.createObjectURL(f)),
+    ];
+
+    const removeImage = (
+        index: number,
+        newFiles: File[],
+        setFieldValue: (field: string, value: unknown) => void
+    ) => {
+        const existingCount = existingImages.length;
+
+        if (index < existingCount) {
+            const updated = existingImages.filter((_, i) => i !== index);
+            setExistingImages(updated);
+        } else {
+            const fileIndex = index - existingCount;
+            const updated = newFiles.filter((_, i) => i !== fileIndex); // ✅ фільтруємо newFiles
+            setFieldValue("images", updated);
+        }
+
+        setActiveIndex(prev => {
+            const newTotal = existingImages.length + newFiles.length - 1;
+            return prev >= newTotal ? Math.max(newTotal - 1, 0) : prev;
+        });
+    };
+
+    if (!isLoaded) {
+        return (
+            <div className="w-full flex justify-center items-center h-[500px]">
+                Завантаження...
+            </div>
+        );
+    }
+
+    return (
+        <Formik
+            initialValues={initialValues}
+            validationSchema={productVariantSchema}
+            enableReinitialize
+            onSubmit={async (values) => {
+                const existingFiles = await Promise.all(
+                    existingImages.map(async (url, i) => {
+                        try {
+                            const res = await fetch(url);
+                            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                            const blob = await res.blob();
+                            const ext = blob.type.split("/")[1] ?? "webp";
+                            return new File([blob], `existing_${i}.${ext}`, { type: blob.type });
+                        } catch (e) {
+                            console.warn(`Не вдалося завантажити фото ${i}:`, e);
+                            return null;
+                        }
+                    })
+                );
+
+                const validExisting = existingFiles.filter((f): f is File => f !== null);
+
+                await onSubmit({
+                    ...values,
+                    images: [...validExisting, ...values.images],
+                });
+            }}
+        >
+            {({ values, setFieldValue, isSubmitting, submitCount }) => {
+                const previewUrls = buildPreviewUrls(values.images);
+                const total = previewUrls.length;
+                const safeIndex = Math.min(activeIndex, Math.max(total - 1, 0));
+
+                const prev = () => setActiveIndex(i => (i - 1 + total) % total);
+                const next = () => setActiveIndex(i => (i + 1) % total);
+
+                return (
+                    <div className="w-full p-6">
+                        <Form className="h-full">
+                            <div className="flex gap-6 items-stretch h-full">
+
+
+                                <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6 w-[55%]">
+                                    <p className="m-0 mb-4 text-[13px] font-semibold text-[var(--text)] uppercase tracking-wider">
+                                        Зображення варіанту
+                                    </p>
+
+                                    {total > 0 ? (
+                                        <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-[var(--bg)] mb-3">
+                                            <Image
+                                                src={previewUrls[safeIndex]}
+                                                alt={`variant image ${safeIndex + 1}`}
+                                                fill
+                                                className="object-cover"
+                                                unoptimized
+                                            />
+
+                                            <button
+                                                type="button"
+                                                onClick={() => removeImage(safeIndex, values.images, setFieldValue)}
+                                                className="absolute top-2 left-2 w-7 h-7 rounded-full bg-black/50 hover:bg-red-500/80 text-white flex items-center justify-center transition-colors"
+                                            >
+                                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                                    <path d="M18 6 6 18M6 6l12 12"/>
+                                                </svg>
+                                            </button>
+
+                                            {total > 1 && (
+                                                <>
+                                                    <button type="button" onClick={prev} className="absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center transition-colors">‹</button>
+                                                    <button type="button" onClick={next} className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-black/40 hover:bg-black/60 text-white flex items-center justify-center transition-colors">›</button>
+
+                                                    <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1.5">
+                                                        {previewUrls.map((_, i) => (
+                                                            <button
+                                                                key={i}
+                                                                type="button"
+                                                                onClick={() => setActiveIndex(i)}
+                                                                className={`h-1.5 rounded-full transition-all ${i === safeIndex ? "bg-white w-3" : "bg-white/50 w-1.5"}`}
+                                                            />
+                                                        ))}
+                                                    </div>
+                                                </>
+                                            )}
+
+                                            <span className="absolute top-2 right-2 text-[11px] text-white bg-black/40 px-2 py-0.5 rounded-full">
+                                                {safeIndex + 1} / {total}
+                                            </span>
+                                        </div>
+                                    ) : (
+                                        <div
+                                            onClick={() => fileInputRef.current?.click()}
+                                            className="w-full aspect-video rounded-lg border-2 border-dashed border-[var(--border)] flex flex-col items-center justify-center gap-2 cursor-pointer hover:border-blue-500/40 hover:bg-blue-500/5 transition-colors mb-3"
+                                        >
+                                            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                                                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                                                <circle cx="8.5" cy="8.5" r="1.5"/>
+                                                <path d="m21 15-5-5L5 21"/>
+                                            </svg>
+                                            <span className="text-[13px] text-[var(--muted)]">Натисніть щоб додати фото</span>
+                                        </div>
+                                    )}
+
+                                    {total > 0 && (
+                                        <div className="flex gap-2 flex-wrap">
+                                            {previewUrls.map((url, i) => (
+                                                <div key={i} className="relative group">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setActiveIndex(i)}
+                                                        className={`relative w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${
+                                                            i === safeIndex ? "border-blue-500" : "border-[var(--border)] opacity-60 hover:opacity-100"
+                                                        }`}
+                                                    >
+                                                        <Image src={url} alt="" fill className="object-cover" unoptimized />
+                                                    </button>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => removeImage(i, values.images, setFieldValue)}
+                                                        className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-red-500 text-white items-center justify-center hidden group-hover:flex transition-all shadow-sm z-10"
+                                                    >
+                                                        <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                                                            <path d="M18 6 6 18M6 6l12 12"/>
+                                                        </svg>
+                                                    </button>
+                                                </div>
+                                            ))}
+
+                                            <button
+                                                type="button"
+                                                onClick={() => fileInputRef.current?.click()}
+                                                className="w-16 h-16 rounded-lg border-2 border-dashed border-[var(--border)] flex items-center justify-center text-[var(--muted)] text-xl hover:border-blue-500/40 hover:bg-blue-500/5 transition-colors"
+                                            >
+                                                +
+                                            </button>
+                                        </div>
+                                    )}
+
+                                    <input
+                                        ref={fileInputRef}
+                                        type="file"
+                                        accept="image/*"
+                                        multiple
+                                        className="hidden"
+                                        onChange={e => {
+                                            const files = Array.from(e.target.files ?? []);
+                                            if (!files.length) return;
+                                            const updated = [...values.images, ...files];
+                                            setFieldValue("images", updated);
+                                            setActiveIndex(existingImages.length + updated.length - 1);
+                                            e.target.value = "";
+                                        }}
+                                    />
+                                </div>
+
+                                {/* Поля форми */}
+                                <div className="flex flex-col gap-4 w-[45%]">
+                                    <div className="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6 flex-1">
+                                        <p className="m-0 mb-4 text-[13px] font-semibold text-[var(--text)] uppercase tracking-wider">
+                                            Інформація про варіант
+                                        </p>
+                                        <div className="flex flex-col gap-4">
+                                            <SelectField
+                                                val={getColorOpt()}
+                                                name="colorId"
+                                                label="Колір"
+                                                options={colors?.map(c => ({ value: c.id, label: c.name })) ?? []}
+                                            />
+                                            <SelectField
+                                                val={getSizeOpt()}
+                                                name="sizeId"
+                                                label="Розмір"
+                                                options={sizes?.map(s => ({ value: s.id, label: s.name })) ?? []}
+                                            />
+                                            <SelectField
+                                                val={getSaleOpt()}
+                                                name="saleId"
+                                                label="Знижка"
+                                                options={sales?.map(s => ({ value: s.id, label: s.percent.toString() })).sort((a,b)=> Number(a.label) - Number(b.label)) ?? []}
+                                            />
+                                            <InputField name="price" label="Ціна" placeholder="0.00" type="number" />
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center gap-3">
+                                        <button
+                                            type="submit"
+                                            disabled={isLoading || isSubmitting}
+                                            className="px-6 py-2.5 rounded-lg text-[14px] bg-[var(--tag)] font-semibold transition-opacity cursor-pointer text-[var(--tag-text)] border border-[var(--border)] disabled:opacity-50 disabled:cursor-not-allowed hover:bg-blue-500/10 hover:border-blue-500/20 hover:text-blue-500 hover:shadow-sm"
+                                        >
+                                            {isLoading || isSubmitting ? "Збереження..." : "Зберегти зміни"}
+                                        </button>
+
+                                        {submitCount > 0 && !isSubmitting && !isLoading && (
+                                            <span className="text-[13px] text-[var(--price)] flex items-center gap-1">
+                                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                                    <path d="M20 6 9 17l-5-5"/>
+                                                </svg>
+                                                Збережено
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        </Form>
+                    </div>
+                );
+            }}
+        </Formik>
+    );
+};
+
+const InputField = ({ name, label, placeholder, type = "text" }: { name: string; label: string; placeholder?: string; type?: string }) => (
+    <div className="flex flex-col gap-1">
+        <label className="text-[12px] font-medium text-[var(--muted)] uppercase tracking-wide">{label}</label>
+        <FormikField
+            name={name}
+            type={type}
+            placeholder={placeholder}
+            className="px-3 py-2 rounded-lg text-[14px] text-[var(--text)] bg-[var(--bg)] border border-[var(--border)] outline-none transition-colors placeholder:text-[var(--muted)] focus:border-[var(--accent-mid)]"
+        />
+        <ErrorMessage name={name} component="p" className="text-[11px] text-[var(--sale)] m-0 mt-0.5" />
+    </div>
+);
+
+const SelectField: FC<SelectFieldProps> = ({
+                                               val,
+                                               name,
+                                               label,
+                                               options,
+                                           }) => {
+    const [field, meta, helpers] = useField(name);
+
+    return (
+        <div className="flex flex-col gap-1">
+            <label className="text-[12px] font-medium text-[var(--muted)] uppercase tracking-wide">
+                {label}
+            </label>
+            <select
+                {...field}
+                value={field.value ?? ""}
+                onChange={(e) => helpers.setValue(e.target.value)}
+                className="
+                    px-3
+                    py-2
+                    rounded-lg
+                    text-[14px]
+                    text-[var(--text)]
+                    bg-[var(--bg)]
+                    border
+                    border-[var(--border)]
+                    outline-none
+                    transition-colors
+                    focus:border-[var(--accent-mid)]
+                "
+            >
+                <option value={val?.value ?? ''}>  {/*ось тут повино виводитись  val*/}
+                    {val?.label ?? "Оберіть..."}
+                </option>
+                {options.map(option => (
+                    <option
+                        key={option.value}
+                        value={option.value}
+                    >
+                        {option.label}
+                    </option>
+                ))}
+            </select>
+            {meta.touched && meta.error && (
+                <p className="text-[11px] text-[var(--sale)]">
+                    {meta.error}
+                </p>
+            )}
+        </div>
+
+    );
+
+};
+
+export default ProductVariantEditForm;

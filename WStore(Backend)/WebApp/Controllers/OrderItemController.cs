@@ -4,11 +4,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApplication1.Controlers;
-[Route("api/[controller]")]
+[Route("api/[controller]/[action]")]
 [ApiController]
 public class OrderItemController(IOrderItemService orderItemService) : ControllerBase
 {
-    [HttpGet("OrderItems")]
+    [HttpGet]
     [AllowAnonymous]
     public async Task<IActionResult> GetOrderItems()
     {
@@ -16,35 +16,35 @@ public class OrderItemController(IOrderItemService orderItemService) : Controlle
         return Ok(list);
     }
 
-    [HttpGet("OrderItem/{id}")]
+    [HttpGet("{id}")]
     public async Task<IActionResult> GetOrderItemById(Guid id)
     {
         var entity = await orderItemService.GetOrderItemById(id);
         return Ok(entity);
     }
 
-    [HttpPost("Add")]
+    [HttpPost]
     public async Task<IActionResult> AddOrderItem(OrderItemAddUpdateModel model)
     {
         await orderItemService.AddOrderItem(model);
         return Ok();
     }
 
-    [HttpPut("Update/{id}")]
+    [HttpPut("{id}")]
     public async Task<IActionResult> UpdateOrderItem(Guid id, OrderItemAddUpdateModel model)
     {
         await orderItemService.UpdateOrderItem(id, model);
         return Ok();
     }
 
-    [HttpDelete("Delete/{id}")]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> RemoveOrderItem(Guid id)
     {
         await orderItemService.RemoveOrderItem(id);
         return Ok();
     }
 
-    [HttpDelete("RemoveAll")]
+    [HttpDelete]
     public async Task<IActionResult> RemoveAllOrderItems()
     {
         await orderItemService.RemoveAllOrderItems();

@@ -4,12 +4,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApplication1.Controlers;
-[Route("api/[controller]")]
+[Route("api/[controller]/[action]")]
 [ApiController]
 [Authorize(Roles = "StoreOwner, Admin")]
 public class SizeController(ISizeService sizeService)  : ControllerBase
 {
-    [HttpGet("Sizes")]
+    [HttpGet]
     [AllowAnonymous]
     public async Task<IActionResult> GetSizes()
     {
@@ -17,35 +17,35 @@ public class SizeController(ISizeService sizeService)  : ControllerBase
         return Ok(list);
     }
 
-    [HttpGet("Size/{id}")]
+    [HttpGet("{id}")]
     public async Task<IActionResult> GetSizeById(Guid id)
     {
         var entity = await sizeService.GetSizeById(id);
         return Ok(entity);
     }
 
-    [HttpPost("Add")]
+    [HttpPost]
     public async Task<IActionResult> AddSize(SizeAddUpdateModel model)
     {
         await sizeService.AddSize(model);
         return Ok();
     }
 
-    [HttpPut("Update/{id}")]
+    [HttpPut("{id}")]
     public async Task<IActionResult> UpdateSize(Guid id, SizeAddUpdateModel model)
     {
         await sizeService.UpdateSize(id, model);
         return Ok();
     }
 
-    [HttpDelete("Delete/{id}")]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> RemoveSize(Guid id)
     {
         await sizeService.RemoveSize(id);
         return Ok();
     }
 
-    [HttpDelete("RemoveAll")]
+    [HttpDelete]
     public async Task<IActionResult> RemoveAllSizes()
     {
         await sizeService.RemoveAllSizes();

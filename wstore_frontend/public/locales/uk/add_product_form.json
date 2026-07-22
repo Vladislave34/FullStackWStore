@@ -1,0 +1,14 @@
+{
+  "title": "Створити товар",
+  "subtitle": "Створити товар для вашого магазину",
+  "name": "Назва",
+  "name_placeholder": "Назва товару",
+  "name_uk": "Назва (УК)",
+  "name_uk_placeholder": "Назва товару (УК)",
+  "description": "Опис",
+  "description_placeholder": "Опишіть товар",
+  "description_uk": "Опис (УК)",
+  "description_uk_placeholder": "Опишіть товар (УК)",
+  "select": "Оберіть варіант",
+  "submit": "Підтвердити"
+}

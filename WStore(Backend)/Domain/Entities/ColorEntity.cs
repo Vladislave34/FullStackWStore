@@ -6,6 +6,8 @@ namespace Domain.Entities;
 public class ColorEntity : BaseEntity<Guid>
 {
     [Required] public string Name { get; set; }
+    
+    [Required] public string NameUk { get; set; } = null!;
     [Required] public string Hex { get; set; }
 
     public ICollection<ProductVariantEntity> ProductVariants { get; set; } = new List<ProductVariantEntity>();

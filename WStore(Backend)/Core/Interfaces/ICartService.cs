@@ -4,7 +4,7 @@ namespace Core.Interfaces;
 
 public interface ICartService
 {
-    Task AddCart();
+    Task<Guid> AddCart();
     Task UpdateCart(Guid id, CartAddUpdateModel model);
     Task RemoveCart(Guid id);
     Task RemoveAllCarts();
@@ -12,4 +12,7 @@ public interface ICartService
     Task<IEnumerable<CartItemModel>> GetAllCarts();
     
     Task<CartItemModel> GetCartById(Guid id);
+
+    Task<bool> HasCart();
+    Task<CartItemModel> GetCartItemByUser();
 }

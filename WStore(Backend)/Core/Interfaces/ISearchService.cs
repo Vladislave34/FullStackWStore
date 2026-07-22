@@ -6,12 +6,22 @@ namespace Core.Interfaces;
 public interface ISearchService
 {
     Task IndexProductAsync(ProductEntity product);
-    Task<List<ProductSearchModel>> SearchAsync(
-        string query,
-        string lang = "en",
-        string? category = null,
-        decimal? minPrice = null,
-        decimal? maxPrice = null);
-    Task<List<string>> AutocompleteAsync(string prefix, string lang = "en");
+    Task IndexCartItemAsync(CartItemEntity cartItem);
+
+    Task EnsureIndexCreatedAsync();
+    
     Task DeleteProductAsync(Guid id);
+    Task ReindexAllAsync();
+    
+    Task<(List<Guid> Ids, int TotalCount)> SearchAsync(
+        string query, string lang, Guid? storeId, Guid? categoryId, int pageNumber, int pageSize);
+
+    Task<(List<Guid> Ids, int TotalCount)> SearchAsync(
+        string? query, string lang, Guid? categoryId, Guid? genderId,
+        Guid? colorId, Guid? sizeId,
+        int pageNumber, int pageSize);
+
+    Task<(List<Guid> Ids, int TotalCount)> SearchCartItemAsync(
+        string query, string lang, int pageNumber, int pageSize);
+
 }

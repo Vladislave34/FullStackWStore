@@ -17,10 +17,51 @@ namespace Domain.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.4")
+                .HasAnnotation("ProductVersion", "10.0.4")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("Domain.Entities.AdrressEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("HouseNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Street")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Adrresses");
+                });
 
             modelBuilder.Entity("Domain.Entities.CartEntity", b =>
                 {
@@ -78,8 +119,7 @@ namespace Domain.Migrations
 
                     b.HasIndex("CartId");
 
-                    b.HasIndex("ProductVariantId")
-                        .IsUnique();
+                    b.HasIndex("ProductVariantId");
 
                     b.ToTable("CartItems");
                 });
@@ -133,6 +173,10 @@ namespace Domain.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("NameUk")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -211,6 +255,34 @@ namespace Domain.Migrations
                     b.HasIndex("FeedbackId");
 
                     b.ToTable("FeedbackImages");
+                });
+
+            modelBuilder.Entity("Domain.Entities.GenderEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("NameUk")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Genders");
                 });
 
             modelBuilder.Entity("Domain.Entities.Identity.RoleEntity", b =>
@@ -350,6 +422,9 @@ namespace Domain.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("AdrressId")
+                        .HasColumnType("uuid");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
@@ -357,6 +432,9 @@ namespace Domain.Migrations
                         .HasColumnType("boolean");
 
                     b.Property<Guid>("OrderStatusId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("PaymentId")
                         .HasColumnType("uuid");
 
                     b.Property<decimal>("TotalPrice")
@@ -370,7 +448,11 @@ namespace Domain.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AdrressId");
+
                     b.HasIndex("OrderStatusId");
+
+                    b.HasIndex("PaymentId");
 
                     b.HasIndex("UserId");
 
@@ -467,6 +549,51 @@ namespace Domain.Migrations
                     b.ToTable("OrderStatuses");
                 });
 
+            modelBuilder.Entity("Domain.Entities.PaymentEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("CVV")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Date")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Number")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("OwnerName")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("PaymentSystem")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid?>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Payments");
+                });
+
             modelBuilder.Entity("Domain.Entities.ProductEntity", b =>
                 {
                     b.Property<Guid>("Id")
@@ -486,6 +613,9 @@ namespace Domain.Migrations
                     b.Property<string>("DescriptionUk")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<Guid>("GenderId")
+                        .HasColumnType("uuid");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
@@ -507,6 +637,8 @@ namespace Domain.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("GenderId");
 
                     b.HasIndex("StoreId");
 
@@ -534,6 +666,12 @@ namespace Domain.Migrations
                     b.Property<Guid>("ProductId")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("ProductVariantEntityId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("SaleId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("SizeId")
                         .HasColumnType("uuid");
 
@@ -545,6 +683,10 @@ namespace Domain.Migrations
                     b.HasIndex("ColorId");
 
                     b.HasIndex("ProductId");
+
+                    b.HasIndex("ProductVariantEntityId");
+
+                    b.HasIndex("SaleId");
 
                     b.HasIndex("SizeId");
 
@@ -581,6 +723,29 @@ namespace Domain.Migrations
                     b.HasIndex("ProductVariantId");
 
                     b.ToTable("ProductImages");
+                });
+
+            modelBuilder.Entity("Domain.Entities.SaleEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("Percent")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Sales");
                 });
 
             modelBuilder.Entity("Domain.Entities.SizeEntity", b =>
@@ -672,6 +837,21 @@ namespace Domain.Migrations
                     b.ToTable("StoreImages");
                 });
 
+            modelBuilder.Entity("FavouriteProducts", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("ProductId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("UserId", "ProductId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("FavouriteProducts", (string)null);
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
                 {
                     b.Property<int>("Id")
@@ -760,6 +940,15 @@ namespace Domain.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Domain.Entities.AdrressEntity", b =>
+                {
+                    b.HasOne("Domain.Entities.Identity.UserEntity", "User")
+                        .WithMany("Addresses")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Domain.Entities.CartEntity", b =>
                 {
                     b.HasOne("Domain.Entities.Identity.UserEntity", "User")
@@ -780,8 +969,8 @@ namespace Domain.Migrations
                         .IsRequired();
 
                     b.HasOne("Domain.Entities.ProductVariantEntity", "ProductVariant")
-                        .WithOne("CartItem")
-                        .HasForeignKey("Domain.Entities.CartItemEntity", "ProductVariantId")
+                        .WithMany("CartItems")
+                        .HasForeignKey("ProductVariantId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -841,9 +1030,21 @@ namespace Domain.Migrations
 
             modelBuilder.Entity("Domain.Entities.OrderEntity", b =>
                 {
+                    b.HasOne("Domain.Entities.AdrressEntity", "Adrress")
+                        .WithMany("Orders")
+                        .HasForeignKey("AdrressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Domain.Entities.OrderStatusEntity", "OrderStatus")
                         .WithMany("Order")
                         .HasForeignKey("OrderStatusId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.PaymentEntity", "Payment")
+                        .WithMany("Orders")
+                        .HasForeignKey("PaymentId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -853,7 +1054,11 @@ namespace Domain.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Adrress");
+
                     b.Navigation("OrderStatus");
+
+                    b.Navigation("Payment");
 
                     b.Navigation("User");
                 });
@@ -896,11 +1101,26 @@ namespace Domain.Migrations
                     b.Navigation("ProductVariant");
                 });
 
+            modelBuilder.Entity("Domain.Entities.PaymentEntity", b =>
+                {
+                    b.HasOne("Domain.Entities.Identity.UserEntity", "User")
+                        .WithMany("Payments")
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("Domain.Entities.ProductEntity", b =>
                 {
                     b.HasOne("Domain.Entities.CategoryEntity", "CategoryEntity")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.GenderEntity", "GenderEntity")
+                        .WithMany()
+                        .HasForeignKey("GenderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -911,6 +1131,8 @@ namespace Domain.Migrations
                         .IsRequired();
 
                     b.Navigation("CategoryEntity");
+
+                    b.Navigation("GenderEntity");
 
                     b.Navigation("Store");
                 });
@@ -929,6 +1151,14 @@ namespace Domain.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("Domain.Entities.ProductVariantEntity", null)
+                        .WithMany("Variants")
+                        .HasForeignKey("ProductVariantEntityId");
+
+                    b.HasOne("Domain.Entities.SaleEntity", "Sale")
+                        .WithMany()
+                        .HasForeignKey("SaleId");
+
                     b.HasOne("Domain.Entities.SizeEntity", "Size")
                         .WithMany("ProductVariants")
                         .HasForeignKey("SizeId")
@@ -938,6 +1168,8 @@ namespace Domain.Migrations
                     b.Navigation("Color");
 
                     b.Navigation("Product");
+
+                    b.Navigation("Sale");
 
                     b.Navigation("Size");
                 });
@@ -973,6 +1205,21 @@ namespace Domain.Migrations
                         .IsRequired();
 
                     b.Navigation("Store");
+                });
+
+            modelBuilder.Entity("FavouriteProducts", b =>
+                {
+                    b.HasOne("Domain.Entities.ProductEntity", null)
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Identity.UserEntity", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -1011,6 +1258,11 @@ namespace Domain.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Domain.Entities.AdrressEntity", b =>
+                {
+                    b.Navigation("Orders");
+                });
+
             modelBuilder.Entity("Domain.Entities.CartEntity", b =>
                 {
                     b.Navigation("Items");
@@ -1038,11 +1290,15 @@ namespace Domain.Migrations
 
             modelBuilder.Entity("Domain.Entities.Identity.UserEntity", b =>
                 {
+                    b.Navigation("Addresses");
+
                     b.Navigation("Carts");
 
                     b.Navigation("Feedbacks");
 
                     b.Navigation("Orders");
+
+                    b.Navigation("Payments");
 
                     b.Navigation("Stores");
 
@@ -1061,6 +1317,11 @@ namespace Domain.Migrations
                     b.Navigation("Order");
                 });
 
+            modelBuilder.Entity("Domain.Entities.PaymentEntity", b =>
+                {
+                    b.Navigation("Orders");
+                });
+
             modelBuilder.Entity("Domain.Entities.ProductEntity", b =>
                 {
                     b.Navigation("Feedbacks");
@@ -1070,10 +1331,11 @@ namespace Domain.Migrations
 
             modelBuilder.Entity("Domain.Entities.ProductVariantEntity", b =>
                 {
-                    b.Navigation("CartItem")
-                        .IsRequired();
+                    b.Navigation("CartItems");
 
                     b.Navigation("Image");
+
+                    b.Navigation("Variants");
                 });
 
             modelBuilder.Entity("Domain.Entities.SizeEntity", b =>

@@ -9,9 +9,11 @@ namespace Core.Services;
 public class RedisService  : IRedisService
 {
     private readonly IDatabase _db;
+    private readonly IConnectionMultiplexer redis;
 
     public RedisService(IConnectionMultiplexer redis)
     {
+        this.redis = redis;
         _db = redis.GetDatabase();
     }
     public async Task<T?> GetAsync<T>(string key)
@@ -31,5 +33,20 @@ public class RedisService  : IRedisService
     public async Task RemoveAsync(string key)
     {
         await _db.KeyDeleteAsync(key);
+    }
+    public async Task RemoveByPrefixAsync(string prefix)
+    {
+        
+        var endpoints = redis.GetEndPoints();
+
+        foreach (var endpoint in endpoints)
+        {
+            var server = redis.GetServer(endpoint);
+            if (!server.IsConnected || server.IsReplica) continue;
+            await foreach (var key in server.KeysAsync(pattern: $"{prefix}*"))
+            {
+                await _db.KeyDeleteAsync(key);
+            }
+        }
     }
 }

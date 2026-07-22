@@ -1,4 +1,5 @@
 using Core.Models.CartItem;
+using Core.Models.Product;
 
 namespace Core.Interfaces;
 
@@ -12,4 +13,8 @@ public interface ICartItemService
     Task<IEnumerable<CartItemItemModel>> GetAllCartItems();
     
     Task<CartItemItemModel> GetCartItemById(Guid id);
+    
+    Task<IEnumerable<CartItemItemModel>> GetCartItemsByUser();
+    Task<PageResult<CartItemItemModel>> SearchCartItems(
+        string query, string lang, int pageNumber = 1, int pageSize = 10);
 }

@@ -19,7 +19,10 @@ public class ProductVariantMapper : Profile
                 opt => opt.MapFrom(src =>
                     src.Image.Where(i => !i.IsDeleted)
                         .Select(i => i.Path)
-                ));
+                ))
+            .ForMember(x => x.Sale,
+                opt => opt.MapFrom(src => 
+                    src.Sale != null ? src.Sale.Percent : (int?)null));;
         CreateMap<ProductVariantAddUpdateModel, ProductVariantEntity>()
             .ForMember(x => x.Image, 
                 opt => opt.Ignore());

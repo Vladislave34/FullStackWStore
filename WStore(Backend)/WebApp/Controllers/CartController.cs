@@ -5,12 +5,12 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApplication1.Controlers;
-[Route("api/[controller]")]
+[Route("api/[controller]/[action]")]
 [ApiController]
 [Authorize(Roles = "StoreOwner, Admin")]
 public class CartController(ICartService cartService) : ControllerBase
 {
-    [HttpGet("Carts")]
+    [HttpGet]
     [AllowAnonymous]
     public async Task<IActionResult> GetCarts()
     {
@@ -18,38 +18,52 @@ public class CartController(ICartService cartService) : ControllerBase
         return Ok(list);
     }
 
-    [HttpGet("Cart/{id}")]
+    [HttpGet]
     public async Task<IActionResult> GetCartById(Guid id)
     {
         var entity = await cartService.GetCartById(id);
         return Ok(entity);
     }
 
-    [HttpPost("Add")]
+    [HttpPost]
     public async Task<IActionResult> AddCart()
     {
-        await cartService.AddCart();
-        return Ok();
+        var id = await cartService.AddCart();
+        return Ok(id);
     }
 
-    [HttpPut("Update/{id}")]
+    [HttpPut("{id}")]
     public async Task<IActionResult> UpdateCart(Guid id, CartAddUpdateModel model)
     {
         await cartService.UpdateCart(id, model);
         return Ok();
     }
 
-    [HttpDelete("Delete/{id}")]
+    [HttpDelete]
     public async Task<IActionResult> RemoveCart(Guid id)
     {
         await cartService.RemoveCart(id);
         return Ok();
     }
 
-    [HttpDelete("RemoveAll")]
+    [HttpDelete]
     public async Task<IActionResult> RemoveAllCarts()
     {
         await cartService.RemoveAllCarts();
         return Ok();
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> HasCart()
+    {
+        bool hasCart = await cartService.HasCart();
+        return Ok(hasCart);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetCartByUser()
+    {
+        var item = await cartService.GetCartItemByUser();
+        return Ok(item);
     }
 }

@@ -19,11 +19,11 @@ const nextConfig: NextConfig = {
             return [
                    {
                           source: '/api/:path*',
-                          destination: 'http://localhost:5125/api/:path*',
+                          destination: 'http://192.168.64.3:8080/api/:path*',
                    },
             ];
         },
 };
 
-const withNextIntl = createNextIntlPlugin();
-export default withNextIntl(nextConfig);
+
+export default nextConfig

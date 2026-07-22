@@ -9,7 +9,7 @@ import IStore from "@/models/store/IStore";
 export const storeApi = createApi({
     reducerPath: 'storeApi',
     baseQuery: fetchBaseQuery({
-        baseUrl: "/api/store",
+        baseUrl: "/api/Store",
         prepareHeaders: (headers) => {
             const token = localStorage.getItem('accessToken');
             if (token) headers.set('Authorization', `Bearer ${token}`);
@@ -20,7 +20,7 @@ export const storeApi = createApi({
     endpoints: (build) => ({
         getStore: build.query<IStore, void>({
             query: ()=>({
-                url: "/StoreByUserId",
+                url: "/GetStoreByUserId",
                 method: "GET",
             }),
             providesTags: ['Store']
@@ -35,7 +35,7 @@ export const storeApi = createApi({
                     model.images.forEach(file => formData.append("images", file));
                 }
 
-                return { url: "/Add", method: "POST", body: formData };
+                return { url: "/AddStore", method: "POST", body: formData };
             },
             invalidatesTags: ["Store"]
         }),
@@ -44,17 +44,14 @@ export const storeApi = createApi({
                 const formData = new FormData();
                 formData.append("name", model.name);
                 formData.append("description", model.description);
-                if (model.images?.length) {
-                    model.images.forEach(file => formData.append("images", file));
-                }
-                for (const [key, value] of formData.entries()) {
-
-                    console.log(key, value);
-
-                }
 
 
-                return { url: `/Update/${model.id}`, method: "PUT", body: formData, formData: true };
+                // model.existingImages?.forEach(url => formData.append("existingImages", url));
+
+
+                model.images?.forEach(file => formData.append("images", file));
+
+                return { url: `/UpdateStore/${model.id}`, method: "PUT", body: formData, formData: true };
             },
             invalidatesTags: ["Store"]
         })

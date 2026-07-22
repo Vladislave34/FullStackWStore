@@ -55,7 +55,7 @@ public class UserService(IAuthService authService, IMapper mapper, AppStoreConte
             return false;
         }
         var token = await userManager.GeneratePasswordResetTokenAsync(user);
-        var resetLink = $"{configuration["ClientUrl"]}/reset-password?token={Uri.EscapeDataString(token)}&email={Uri.EscapeDataString(model.Email)}";
+        var resetLink = $"{configuration["ClientUrl"]}/en/reset-password?token={Uri.EscapeDataString(token)}&email={Uri.EscapeDataString(model.Email)}";
         var To = model.Email;
         var Subject = "Reset Password";
         var Body = $"<p>Click the link below to reset your password:</p><a href='{resetLink}'>Reset Password</a>";

@@ -4,47 +4,49 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApplication1.Controlers;
-[Route("api/[controller]")]
+[Route("api/[controller]/[action]")]
 [ApiController]
 [Authorize(Roles = "StoreOwner, Admin")]
 public class ColorController(IColorService colorService) : ControllerBase
 {
-    [HttpGet("Colors")]
+    private string Lang =>
+        Request.Headers["Accept-Language"].FirstOrDefault() ?? "en";
+    [HttpGet]
     [AllowAnonymous]
     public async Task<IActionResult> GetColors()
     {
-        var list = await colorService.GetAllColors();
+        var list = await colorService.GetAllColors(Lang);
         return Ok(list);
     }
 
-    [HttpGet("Color/{id}")]
+    [HttpGet("{id}")]
     public async Task<IActionResult> GetColor(Guid id)
     {
-        var entity = await colorService.GetColorById(id);
+        var entity = await colorService.GetColorById(id, Lang);
         return Ok(entity);
     }
 
-    [HttpPost("Add")]
+    [HttpPost]
     public async Task<IActionResult> AddColor(ColorAddUpdateModel model)
     {
         await colorService.AddColor(model);
         return Ok();
     }
 
-    [HttpPut("Update")]
+    [HttpPut]
     public async Task<IActionResult> UpdateColor(ColorAddUpdateModel model)
     {
         await colorService.UpdateColor(model);
         return Ok();
     }
 
-    [HttpDelete("Delete/{id}")]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> RemoveColor(Guid id)
     {
         await colorService.RemoveColor(id);
         return Ok();
     }
-    [HttpDelete("RemoveAll")]
+    [HttpDelete]
     public async Task<IActionResult> RemoveAllColors()
     {
         await colorService.RemoveAllColors();

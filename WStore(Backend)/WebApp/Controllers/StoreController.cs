@@ -5,11 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace WebApplication1.Controlers;
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/[controller]/[action]")]
 //[Authorize(Roles = "StoreOwner, Admin")]
 public class StoreController(IStoreService storeService) : ControllerBase
 {
-    [HttpGet("Stores")]
+    [HttpGet]
     [AllowAnonymous]
     public async Task<IActionResult> GetSores()
     {
@@ -17,20 +17,20 @@ public class StoreController(IStoreService storeService) : ControllerBase
         return Ok(stores);
     }
 
-    [HttpGet("Store/{id}")]
+    [HttpGet("{id}")]
     public async Task<IActionResult> GetStoreById(Guid id)
     {
         var store = await storeService.GetStoreById(id);
         return Ok(store);
     }
-    [HttpGet("StoreByUserId")]
+    [HttpGet]
     public async Task<IActionResult> GetStoreByUserId()
     {
         var store = await storeService.GetStoreByUserId();
         return Ok(store);
     }
 
-    [HttpPost("Add")]
+    [HttpPost]
     [Authorize]
     public async Task<IActionResult> AddStore([FromForm] StoreAddUpdateModel model)
     {
@@ -38,21 +38,21 @@ public class StoreController(IStoreService storeService) : ControllerBase
         return Ok(res);
     }
 
-    [HttpPut("Update/{id}")]
+    [HttpPut("{id}")]
     public async Task<IActionResult> UpdateStore(Guid id, StoreAddUpdateModel model)
     {
         await storeService.UpdateStore(id, model);
         return Ok();
     }
 
-    [HttpDelete("Delete/{id}")]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteStore(Guid id)
     {
         await storeService.RemoveStore(id);
         return Ok();
     }
 
-    [HttpDelete("RemoveAll")]
+    [HttpDelete]
     public async Task<IActionResult> RemoveAllStores()
     {
         await storeService.RemoveAllStores();

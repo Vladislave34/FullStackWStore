@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import ICategory from "@/models/ICategory";
 import API_ENV from "@/env";
-import {getLocale} from "@/utils/getLocale";
+
 
 
 export const categoryApi = createApi({
@@ -13,7 +13,7 @@ export const categoryApi = createApi({
     endpoints: (build) => ({
         fetchAllCategories: build.query<ICategory[], string>({
             query: (locale) => ({
-                url: "Categories",
+                url: "GetAll",
                 method: "GET",
                 headers: {
                     "Accept-Language": locale,
