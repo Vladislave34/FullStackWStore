@@ -5,72 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f5bed0e3-4790-413d-8c79-5b9cc8ca71a4" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/wstore_frontend/i18n.config.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/wstore_frontend/proxy.ts" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/UI/SwitchLocaleIcon.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/UI/SwitchThemeIcon.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/layout.tsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/middleware.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/next.config.ts" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/next.config.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/UI/AuthorizeMenu.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/UI/AuthorizeMenu.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/UI/BurgerMenu.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/UI/BurgerMenu.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/UI/Button.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/UI/Button.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/UI/ButtonAction.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/UI/ButtonAction.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/UI/CreateStoreArea.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/UI/CreateStoreArea.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/UI/CreateStoreTranslation.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/UI/CreateStoreTranslation.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/UI/GoogleLoginButton.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/UI/GoogleLoginButton.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/UI/GuestMenu.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/UI/GuestMenu.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/UI/Icon.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/UI/Icon.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/UI/Label.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/UI/Label.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/UI/LikeLabel.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/UI/LikeLabel.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/UI/Menu.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/UI/Menu.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/UI/Modal.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/UI/Modal.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/UI/ProductCard.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/UI/ProductCard.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/UI/SaleLabel.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/UI/SaleLabel.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/UI/SearchBar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/UI/SearchBar.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/UI/SideBarLabel.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/UI/SideBarLabel.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/UI/SwitchLocaleIcon.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/UI/SwitchThemeIcon.tsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/UI/forms/CreateStoreForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/UI/forms/CreateStoreForm.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/UI/forms/EditProfileForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/UI/forms/EditProfileForm.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/UI/forms/EditStoreForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/UI/forms/EditStoreForm.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/UI/forms/LoginForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/UI/forms/LoginForm.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/UI/forms/RegisterForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/UI/forms/RegisterForm.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/UI/forms/abstract/UniversalForm.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/UI/forms/abstract/UniversalForm.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/UI/forms/inputs/FormikFileInput.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/UI/forms/inputs/FormikFileInput.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/UI/forms/inputs/FormikInput.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/UI/forms/inputs/FormikInput.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/app/globals.css" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/globals.css" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/app/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/layout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/app/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/app/profile/details/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/profile/details/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/app/profile/favourite/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/profile/favourite/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/app/profile/layout.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/profile/layout.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/app/profile/my-orders/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/profile/my-orders/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/app/profile/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/profile/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/app/profile/store/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/profile/store/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/app/profile/store/products/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/profile/store/products/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/app/profile/store/settings/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/profile/store/settings/page.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/components/Carousel.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/components/Carousel.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/components/CategoryList.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/components/CategoryList.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/components/Footer.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/components/Footer.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/components/Header.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/components/Header.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/components/Hero.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/components/Hero.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/components/MobileMenu.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/components/MobileMenu.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/components/ProductList.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/components/ProductList.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/components/SecHead.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/components/SecHead.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/components/Section.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/components/Section.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/components/SideBar.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/components/SideBar.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/components/StoreSettings.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/app/[lng]/components/StoreSettings.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/i18n/request.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/messages/en.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/messages/uk.json" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/providers/provider.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/wstore_frontend/src/providers/provider.tsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/utils/getLocale.ts" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/wstore_frontend/src/utils/setLocale.ts" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -109,22 +44,26 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.MCP Project settings loaded&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.typescript.service.memoryLimit.init&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "cidr.known.project.marker": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "git-widget-placeholder": "main",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="f5bed0e3-4790-413d-8c79-5b9cc8ca71a4" name="Changes" comment="" />
@@ -138,6 +77,7 @@
       <workItem from="1774879625999" duration="491000" />
       <workItem from="1780297578842" duration="112000" />
       <workItem from="1780589969733" duration="17000" />
+      <workItem from="1784724816354" duration="319000" />
     </task>
     <task id="LOCAL-00001" summary="Backend Done">
       <option name="closed" value="true" />
