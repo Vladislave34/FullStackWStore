@@ -10,6 +10,7 @@ import {
 } from 'recharts';
 import { statisticsApi } from "@/services/statisticsService";
 import CustomSelect from "@/app/[lng]/UI/SelectButton";
+import {useT} from "next-i18next/client";
 
 const formatDate = (isoString: string) => {
     const d = new Date(isoString);
@@ -48,6 +49,7 @@ const CustomDot = (props: CustomDotProps) => {
 };
 
 export default function IncomeAreaChart() {
+    const {t} = useT('statistics');
     const times = ["30", "60", "90", "180", "365"];
     const [period, setPeriod] = useState<string | null>("30")
     const { data: rawData, isLoading, isError } = statisticsApi.useGetStatisticsQuery(Number(period));
@@ -82,9 +84,9 @@ export default function IncomeAreaChart() {
         >
             <div className="flex flex-row w-full justify-between">
             <div className="mb-2 text-lg font-semibold" style={{ color: 'var(--text)' }}>
-                Прибуток за час
+                {t('income_area_chart')}
             </div>
-            <CustomSelect name={"Period"} options={times} value={period} onChange={setPeriod} />
+            <CustomSelect name={t("period")} options={times} value={period} onChange={setPeriod} />
             </div>
             <ResponsiveContainer width="100%" height="85%">
                 <AreaChart

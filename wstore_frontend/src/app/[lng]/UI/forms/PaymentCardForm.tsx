@@ -5,6 +5,7 @@ import {paymentApi} from "@/services/paymentService";
 import IAddPaymentModel from "@/models/payment/IAddPaymentModel";
 import {FaCcVisa} from "react-icons/fa6";
 import {RiMastercardLine} from "react-icons/ri";
+import {useT} from "next-i18next/client";
 
 interface FormErrors {
     cardHolder?: string;
@@ -15,6 +16,7 @@ interface FormErrors {
 }
 
 export default function PaymentCardForm({closaModal}: {closaModal: ()=>void}) {
+    const {t} = useT('payment_form');
     const [cardHolder, setCardHolder] = useState("");
     const [cardNumber, setCardNumber] = useState("");
     const [month, setMonth] = useState("");
@@ -31,12 +33,12 @@ export default function PaymentCardForm({closaModal}: {closaModal: ()=>void}) {
 
     const validate = (): FormErrors => {
         const next: FormErrors = {};
-        if (!cardHolder.trim()) next.cardHolder = "Cardholder name is required";
+        if (!cardHolder.trim()) next.cardHolder = t('errors.cardHolderRequired');
         if (cardNumber.replace(/\s/g, "").length < 16)
-            next.cardNumber = "Card number is required";
-        if (!month) next.month = "Expiry month is required";
-        if (!year) next.year = "Expiry year is required";
-        if (cvc.length < 3) next.cvc = "CVC is required";
+            next.cardNumber = t('errors.cardNumberRequired');
+        if (!month) next.month = t('errors.monthRequired');
+        if (!year) next.year = t('errors.yearRequired');
+        if (cvc.length < 3) next.cvc = t('errors.cvcRequired');
         return next;
     };
 
@@ -157,13 +159,13 @@ export default function PaymentCardForm({closaModal}: {closaModal: ()=>void}) {
                                     className="text-xs tracking-wider mb-1"
                                     style={{ color: "var(--muted)" }}
                                 >
-                                    CARD HOLDER
+                                    {t('cardHolderLabel')}
                                 </p>
                                 <p
                                     className="font-semibold uppercase"
                                     style={{ color: "var(--text)" }}
                                 >
-                                    {cardHolder || "YOUR NAME"}
+                                    {cardHolder || t('yourNamePlaceholder')}
                                 </p>
                             </div>
                             <div>
@@ -171,7 +173,7 @@ export default function PaymentCardForm({closaModal}: {closaModal: ()=>void}) {
                                     className="text-xs tracking-wider mb-1"
                                     style={{ color: "var(--muted)" }}
                                 >
-                                    EXPIRES
+                                    {t('expiresLabel')}
                                 </p>
                                 <p className="font-semibold" style={{ color: "var(--text)" }}>
                                     {month || "MM"}/{year ? year.slice(-2) : "YY"}
@@ -205,7 +207,7 @@ export default function PaymentCardForm({closaModal}: {closaModal: ()=>void}) {
                                 className="text-xs tracking-wider mb-1"
                                 style={{ color: "var(--muted)" }}
                             >
-                                CVC
+                                {t('cvcLabel')}
                             </p>
                             <div
                                 className="rounded-md h-10 flex items-center justify-end px-4"
@@ -229,7 +231,7 @@ export default function PaymentCardForm({closaModal}: {closaModal: ()=>void}) {
             <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
                     <label className="block mb-2" style={{ color: "var(--text)" }}>
-                        Cardholder Name
+                        {t('cardholderName')}
                     </label>
                     <input
                         type="text"
@@ -238,7 +240,7 @@ export default function PaymentCardForm({closaModal}: {closaModal: ()=>void}) {
                         onChange={(e) => {
                             setCardHolder(e.target.value);
                             runValidation({
-                                cardHolder: e.target.value.trim() ? undefined : "Cardholder name is required",
+                                cardHolder: e.target.value.trim() ? undefined : t('errors.cardHolderRequired'),
                             });
                         }}
                         style={inputStyle(errors.cardHolder)}
@@ -252,7 +254,7 @@ export default function PaymentCardForm({closaModal}: {closaModal: ()=>void}) {
 
                 <div>
                     <label className="block mb-2" style={{ color: "var(--text)" }}>
-                        Card Number
+                        {t('cardNumber')}
                     </label>
                     <input
                         type="text"
@@ -265,7 +267,7 @@ export default function PaymentCardForm({closaModal}: {closaModal: ()=>void}) {
                             runValidation({
                                 cardNumber:
                                     formatted.replace(/\s/g, "").length < 16
-                                        ? "Card number is required"
+                                        ? t('errors.cardNumberRequired')
                                         : undefined,
                             });
                         }}
@@ -282,13 +284,13 @@ export default function PaymentCardForm({closaModal}: {closaModal: ()=>void}) {
                 <div className="grid grid-cols-3 gap-4">
                     <div>
                         <label className="block mb-2" style={{ color: "var(--text)" }}>
-                            Month
+                            {t('month')}
                         </label>
                         <select
                             value={month}
                             onChange={(e) => {
                                 setMonth(e.target.value);
-                                runValidation({ month: e.target.value ? undefined : "Expiry month is required" });
+                                runValidation({ month: e.target.value ? undefined : t('errors.monthRequired') });
                             }}
                             className="appearance-none"
                             style={inputStyle(errors.month)}
@@ -309,13 +311,13 @@ export default function PaymentCardForm({closaModal}: {closaModal: ()=>void}) {
 
                     <div>
                         <label className="block mb-2" style={{ color: "var(--text)" }}>
-                            Year
+                            {t('year')}
                         </label>
                         <select
                             value={year}
                             onChange={(e) => {
                                 setYear(e.target.value);
-                                runValidation({ year: e.target.value ? undefined : "Expiry year is required" });
+                                runValidation({ year: e.target.value ? undefined : t('errors.yearRequired') });
                             }}
                             className="appearance-none"
                             style={inputStyle(errors.year)}
@@ -336,7 +338,7 @@ export default function PaymentCardForm({closaModal}: {closaModal: ()=>void}) {
 
                     <div>
                         <label className="block mb-2" style={{ color: "var(--text)" }}>
-                            CVC
+                            {t('cvc')}
                         </label>
                         <input
                             type="text"
@@ -349,7 +351,7 @@ export default function PaymentCardForm({closaModal}: {closaModal: ()=>void}) {
                             onChange={(e) => {
                                 const v = e.target.value.replace(/\D/g, "").slice(0, 4);
                                 setCvc(v);
-                                runValidation({ cvc: v.length < 3 ? "CVC is required" : undefined });
+                                runValidation({ cvc: v.length < 3 ? t('errors.cvcRequired') : undefined });
                             }}
                             style={inputStyle(errors.cvc)}
                         />
@@ -366,7 +368,7 @@ export default function PaymentCardForm({closaModal}: {closaModal: ()=>void}) {
                     className="w-full font-medium py-3 rounded-lg mt-4 transition-opacity hover:opacity-90"
                     style={{ background: "var(--btn)", color: "#ffffff" }}
                 >
-                    Add
+                    {t('addButton')}
                 </button>
             </form>
         </div>

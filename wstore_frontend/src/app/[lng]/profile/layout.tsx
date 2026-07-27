@@ -21,6 +21,8 @@ const Layout = ({children} : {children: ReactNode}) => {
     const currentLng = path.split('/')[1];
     // console.log(user);
     // console.log("dfvsdfv" + process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID)
+    const a = t("cards");
+    const b = t("address");
     return (
         <>
         <div className="pt-18">
@@ -31,8 +33,8 @@ const Layout = ({children} : {children: ReactNode}) => {
                 <SideBarLabel
                     href={`/${currentLng}/profile/details`}
                     subItems={[
-                        { href: `/${currentLng}/profile/details/cards`, label: "Cards" },
-                        { href: `/${currentLng}/profile/details/adrresses`, label: "Adrress" },
+                        { href: `/${currentLng}/profile/details/cards`, label: a  },
+                        { href: `/${currentLng}/profile/details/adrresses`, label: b },
                     ]} >
                     {t("details")}
                 </SideBarLabel>

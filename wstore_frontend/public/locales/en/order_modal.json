@@ -1,0 +1,10 @@
+{
+  "checkoutTitle": "Checkout",
+  "shippingAddress": "Shipping address",
+  "loading": "Loading...",
+  "noSavedAddresses": "No saved addresses",
+  "paymentMethod": "Payment method",
+  "noSavedCards": "No saved cards",
+  "placingOrder": "Placing order...",
+  "confirmOrder": "Confirm order"
+}

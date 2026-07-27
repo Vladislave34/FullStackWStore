@@ -2,6 +2,9 @@ import BackgroundCarousel from "@/app/[lng]/components/BackgroundCarousel";
 import ProductInfo from "@/app/[lng]/UI/ProductInfo";
 import {productVariantApi} from "@/services/productVariantService";
 import ProductPageBody from "@/app/[lng]/components/ProductPageBody";
+import {Metadata} from "next";
+import {getT} from "next-i18next/server";
+
 
 
 

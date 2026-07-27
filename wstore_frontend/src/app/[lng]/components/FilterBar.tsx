@@ -10,9 +10,11 @@ import Icon from "@/app/[lng]/UI/Icon";
 import {FaFilter} from "react-icons/fa";
 import CheckBox from "@/app/[lng]/UI/CheckBox";
 import CustomCheckbox from "@/app/[lng]/UI/CustomCheckbox";
+import {useT} from "next-i18next/client";
 
 
 const FilterBar = ({lng}: {lng:string}) => {
+    const {t} = useT('filter');
     const [isOpen, setIsOpen] = useState(false);
     const setParams = useSetParams();
     const [category, setCategory] = useState<string | null>(null);
@@ -24,6 +26,7 @@ const FilterBar = ({lng}: {lng:string}) => {
     const {data : genders} =genderApi.useGetAllGendersQuery(lng);
     const {data : colors} = colorApi.useGetColorsQuery(lng);
     const {data : sizes} = sizeApi.useGetSizesQuery();
+
 
     const categories =  cats?.map(category => category.name) ?? [""]
     const genders_ =  genders?.map(gender => gender.name) ?? [""]
@@ -133,7 +136,7 @@ const FilterBar = ({lng}: {lng:string}) => {
         //     </div>
         // </div>
         <div className="relative w-full flex items-center justify-between p-4 min-h-[56px]">
-            <span className='text-[var(--text)] text-3xl font-semibold'>Products</span>
+            <span className='text-[var(--text)] text-3xl font-semibold'>{t('products')}</span>
             <div>
             <div
                 className={`absolute right-16 flex flex-row gap-2 transition-all duration-300 ease-in-out flex flex-row items-center
@@ -142,23 +145,23 @@ const FilterBar = ({lng}: {lng:string}) => {
                     : "translate-x-8 opacity-0 pointer-events-none"}`}
             >
                 <div className="w-48">
-                    <CustomSelect label="Category" name="category" options={categories} value={category} onChange={setCategory} />
+                    <CustomSelect label={t('category')} name="category" options={categories} value={category} onChange={setCategory} />
                 </div>
                 <div className="w-48">
-                    <CustomSelect label="Gender" name="gender" options={genders_} value={gender} onChange={setGender} />
+                    <CustomSelect label={t('gender')} name="gender" options={genders_} value={gender} onChange={setGender} />
                 </div>
                 <div className="w-48">
-                    <CustomSelect label="Color" name="color" options={colors_} value={color} onChange={setColor} />
+                    <CustomSelect label={t('color')} name="color" options={colors_} value={color} onChange={setColor} />
                 </div>
                 <div className="w-48">
-                    <CustomSelect label="Size" name="size" options={sizes_} value={size} onChange={setSize} />
+                    <CustomSelect label={t('size')} name="size" options={sizes_} value={size} onChange={setSize} />
                 </div>
                 <div>
                     <CustomCheckbox
                         id="sale-filter"
                         name="bordered-checkbox"
                         value="true"
-                        label="Sale"
+                        label={t('sale')}
                         checked={hasSale}
                         onChange={setHasSale}
                     />                </div>

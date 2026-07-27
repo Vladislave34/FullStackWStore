@@ -1,8 +1,10 @@
 'use client'
 import React, {useState} from 'react';
 import OrderModal from "@/app/[lng]/UI/OrderModal";
+import {useT} from "next-i18next/client";
 
 const OrderButton = () => {
+    const {t} = useT('profile')
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     return (
@@ -16,7 +18,7 @@ const OrderButton = () => {
                             flex items-center gap-2 whitespace-nowrap
                         "
             >
-                Замовити
+                {t('do_order')}
             </button>
 
             <OrderModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />

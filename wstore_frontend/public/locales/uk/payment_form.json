@@ -1,0 +1,20 @@
+{
+  "cardHolderLabel": "ВЛАСНИК КАРТКИ",
+  "yourNamePlaceholder": "ВАШЕ ІМ'Я",
+  "expiresLabel": "ДІЙСНА ДО",
+  "cvcLabel": "CVC",
+  "cardholderName": "Ім'я власника картки",
+  "cardNumber": "Номер картки",
+  "month": "Місяць",
+  "year": "Рік",
+  "cvc": "CVC",
+  "addButton": "Додати",
+  "saveButton": "Зберегти",
+  "errors": {
+    "cardHolderRequired": "Ім'я власника картки обов'язкове",
+    "cardNumberRequired": "Номер картки обов'язковий",
+    "monthRequired": "Місяць закінчення дії обов'язковий",
+    "yearRequired": "Рік закінчення дії обов'язковий",
+    "cvcRequired": "CVC код обов'язковий"
+  }
+}

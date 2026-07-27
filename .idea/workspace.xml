@@ -3,10 +3,14 @@
   <component name="AutoImportSettings">
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
+  <component name="CMakeProjectFlavorService">
+    <option name="flavorId" value="CMakePlainProjectFlavor" />
+  </component>
+  <component name="CMakeSettings">
+    <configurations />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="f5bed0e3-4790-413d-8c79-5b9cc8ca71a4" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-    </list>
+    <list default="true" id="f5bed0e3-4790-413d-8c79-5b9cc8ca71a4" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -77,7 +81,7 @@
       <workItem from="1774879625999" duration="491000" />
       <workItem from="1780297578842" duration="112000" />
       <workItem from="1780589969733" duration="17000" />
-      <workItem from="1784724816354" duration="319000" />
+      <workItem from="1784724816354" duration="529000" />
     </task>
     <task id="LOCAL-00001" summary="Backend Done">
       <option name="closed" value="true" />

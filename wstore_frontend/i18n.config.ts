@@ -10,7 +10,9 @@ const i18nConfig: I18nConfig = {
         'create_store_form', 'formik_file_input', 'login_form',
         'register_form', 'edit_profile_form', 'edit_store_form',
         'store_products', 'add_product_form', 'product_card_for_store',
-        'create_variant_form', 'sec_head', 'order_status'
+        'create_variant_form', 'sec_head', 'order_status', 'filter', 'order_modal',
+        'details', 'statistics', 'address_form', 'payment_form', 'address_card', 'card',
+        'pages'
     ],
     hideDefaultLocale: true,
     ...(process.env.NODE_ENV === 'production'

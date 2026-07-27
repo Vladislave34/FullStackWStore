@@ -1,0 +1,19 @@
+{
+  "title": "Add address",
+  "subtitle": "Enter the details of the new shipping address",
+  "submit": "Save address",
+  "country": "Country",
+  "city": "City",
+  "street": "Street",
+  "houseNumber": "House number",
+  "edit_title": "Edit address",
+  "edit_subtitle": "Update the shipping address details",
+  "save": "Save changes",
+  "errors": {
+    "minLength": "Minimum 2 characters",
+    "cityRequired": "City is required",
+    "countryRequired": "Country is required",
+    "streetRequired": "Street is required",
+    "houseNumberRequired": "House number is required"
+  }
+}

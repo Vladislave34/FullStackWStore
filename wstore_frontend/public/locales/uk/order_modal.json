@@ -1,0 +1,10 @@
+{
+  "checkoutTitle": "Оформлення замовлення",
+  "shippingAddress": "Адреса доставки",
+  "loading": "Завантаження...",
+  "noSavedAddresses": "Немає збережених адрес",
+  "paymentMethod": "Спосіб оплати",
+  "noSavedCards": "Немає збережених карток",
+  "placingOrder": "Оформлення...",
+  "confirmOrder": "Підтвердити замовлення"
+}

@@ -10,8 +10,10 @@ import UseModal from "@/hooks/useModal";
 import EditPaymentCardForm from "@/app/[lng]/UI/forms/EditPaymentCardForm";
 import Modal from "@/app/[lng]/UI/Modal";
 import {paymentApi} from "@/services/paymentService";
+import {useT} from "next-i18next/client";
 
 const Card = ({card} : {card : IPaymentModel}) => {
+    const {t} = useT('card');
     const [isFlipped_, setIsFlipped_] = useState(false);
     const digits = card.number.replace(/\s/g, "").padEnd(16, "•");
     const groups = [
@@ -174,7 +176,7 @@ const Card = ({card} : {card : IPaymentModel}) => {
 
 
         </div>
-            <Modal isOpen={isOpen} closeModal={closeModal} size='md' title={"Edit Card"}>
+            <Modal isOpen={isOpen} closeModal={closeModal} size='md' title={t('edit')}>
                 <EditPaymentCardForm closaModal={closeModal} card={card} />
             </Modal>
         </>

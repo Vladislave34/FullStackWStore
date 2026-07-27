@@ -1,11 +1,14 @@
 {
   "details": "Details",
-  "favourite": "Favourite",
+  "favourite": "Favourites",
   "my_orders": "My Orders",
   "store": "Store",
   "settings": "Settings",
   "products": "Products",
   "cart": "Cart",
   "orders": "Orders",
-  "statistics": "Statistics"
+  "statistics": "Statistics",
+  "do_order" : "Order",
+  "address" : "Address",
+  "cards" : "Cards"
 }

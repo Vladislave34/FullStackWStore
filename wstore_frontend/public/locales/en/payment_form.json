@@ -1,0 +1,20 @@
+{
+  "cardHolderLabel": "CARD HOLDER",
+  "yourNamePlaceholder": "YOUR NAME",
+  "expiresLabel": "EXPIRES",
+  "cvcLabel": "CVC",
+  "cardholderName": "Cardholder Name",
+  "cardNumber": "Card Number",
+  "month": "Month",
+  "year": "Year",
+  "cvc": "CVC",
+  "addButton": "Add",
+  "saveButton": "Save",
+  "errors": {
+    "cardHolderRequired": "Cardholder name is required",
+    "cardNumberRequired": "Card number is required",
+    "monthRequired": "Expiry month is required",
+    "yearRequired": "Expiry year is required",
+    "cvcRequired": "CVC is required"
+  }
+}

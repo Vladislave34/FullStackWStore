@@ -8,20 +8,9 @@ import {useT} from "next-i18next/client";
 
 import {addressApi} from "@/services/addressService";
 import IAddAddressModel from "@/models/address/IAddAddressModel";
+import {useMemo} from "react";
 
-const addAddressSchema = Yup.object({
-    city: Yup.string()
-        .min(2, "Мінімум 2 символи")
-        .required("Місто обов'язкове"),
-    country: Yup.string()
-        .min(2, "Мінімум 2 символи")
-        .required("Країна обов'язкова"),
-    street: Yup.string()
-        .min(2, "Мінімум 2 символи")
-        .required("Вулиця обов'язкова"),
-    houseNumber: Yup.string()
-        .required("Номер будинку обов'язковий"),
-});
+
 
 const initialValues: IAddAddressModel = {
     city: "",
@@ -33,6 +22,19 @@ const initialValues: IAddAddressModel = {
 const AddAddressForm = ({closeModal}: {closeModal: () => void}) => {
     const [addAddress] = addressApi.useAddAdrressMutation();
     const {t} = useT('address_form');
+    const addAddressSchema = useMemo(() => Yup.object({
+        city: Yup.string()
+            .min(2, t('errors.minLength'))
+            .required(t('errors.cityRequired')),
+        country: Yup.string()
+            .min(2, t('errors.minLength'))
+            .required(t('errors.countryRequired')),
+        street: Yup.string()
+            .min(2, t('errors.minLength'))
+            .required(t('errors.streetRequired')),
+        houseNumber: Yup.string()
+            .required(t('errors.houseNumberRequired')),
+    }), [t]);
 
     const handleSubmit = async (values: IAddAddressModel) => {
         try {

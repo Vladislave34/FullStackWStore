@@ -8,9 +8,11 @@ import useModal from "@/hooks/useModal";
 import AddAddressForm from "@/app/[lng]/UI/forms/AddAdrressForm";
 import {addressApi} from "@/services/addressService";
 import AddressCard from "@/app/[lng]/UI/AddressCard";
+import {useT} from "next-i18next/client";
 
 
 const Page = () => {
+    const {t} = useT('details');
     const {isOpen, openModal, closeModal} = useModal();
     const {data} = addressApi.useGetAddressesByUserQuery();
 
@@ -18,8 +20,8 @@ const Page = () => {
         <>
             <div className="p-8 min-h-screen">
                 <div className="flex flex-row gap-2 py-4 mb-4 justify-between items-center ">
-                    <span className='text-[var(--text)] text-3xl font-semibold'>Addresses</span>
-                    <TitleButton func={()=>openModal()} title={"Add Address"} />
+                    <span className='text-[var(--text)] text-3xl font-semibold'>{t('address')}</span>
+                    <TitleButton func={()=>openModal()} title={t("add_address")} />
                 </div>
                 <div className="grid grid-cols-2">
                     {data?.map((adrress) => (<AddressCard address={adrress} key={adrress.id} />))}
@@ -27,7 +29,7 @@ const Page = () => {
                 </div>
 
             </div>
-            <Modal isOpen={isOpen} title={"Add Adrress"}  size={'md'} closeModal={closeModal} >
+            <Modal isOpen={isOpen} title={t("add_address")}  size={'md'} closeModal={closeModal} >
                 <AddAddressForm closeModal={closeModal}   />
             </Modal>
         </>

@@ -11,6 +11,7 @@ import {
 } from 'recharts';
 import { statisticsApi } from "@/services/statisticsService";
 import CustomSelect from "@/app/[lng]/UI/SelectButton";
+import {useT} from "next-i18next/client";
 
 interface CategoryIncomeItem {
     startDate: string;
@@ -45,7 +46,7 @@ const CustomBarLabel = (props: CustomBarLabelProps) => {
 };
 
 export default function CategoryIncomeChart({ lng }: { lng: string }) {
-
+    const {t} = useT('statistics');
 
     const { data: rawData, isLoading, isError } = statisticsApi.useGetStatisticsByCategoryQuery();
 
@@ -77,7 +78,7 @@ export default function CategoryIncomeChart({ lng }: { lng: string }) {
         >
             <div className="flex flex-row w-full justify-between">
                 <div className="mb-2 text-lg font-semibold" style={{ color: 'var(--text)' }}>
-                    Прибуток за категорією
+                    {t('category_income_chart')}
                 </div>
             </div>
             <ResponsiveContainer width="100%" height="85%">

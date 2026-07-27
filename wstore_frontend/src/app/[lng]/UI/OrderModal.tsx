@@ -5,7 +5,8 @@ import {addressApi} from "@/services/addressService";
 import {paymentApi} from "@/services/paymentService";
 import {orderApi} from "@/services/orderService";
 import {cartApi} from "@/services/cartService";
-import {data} from "framer-motion/m"; // припущення: назва сервісу карток
+import {data} from "framer-motion/m";
+import {useT} from "next-i18next/client"; // припущення: назва сервісу карток
 
 
 interface OrderModalProps {
@@ -17,6 +18,7 @@ const OrderModal = ({isOpen, onClose}: OrderModalProps) => {
     // const {data : cart} = cartApi.useGetCartByUserQuery()
     // console.log("cart", cart);
     // const cartId = cart?.id;
+    const {t} = useT('order_modal')
     const cartItemIds = useAppSelector(state => state.cartItemSlice.cartItemIds);
 
     const {data: addresses, isLoading: addressesLoading} = addressApi.useGetAddressesByUserQuery();
@@ -64,7 +66,7 @@ const OrderModal = ({isOpen, onClose}: OrderModalProps) => {
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-xl font-semibold text-[var(--text)]">Оформлення замовлення</h2>
+                    <h2 className="text-xl font-semibold text-[var(--text)]">{t('checkoutTitle')}</h2>
                     <button onClick={onClose} className="text-[var(--text)] opacity-60 hover:opacity-100">
                         ✕
                     </button>
@@ -72,14 +74,14 @@ const OrderModal = ({isOpen, onClose}: OrderModalProps) => {
 
                 {/* Вибір адреси */}
                 <div className="mb-6">
-                    <h3 className="text-sm font-semibold text-[var(--text)] mb-2">Адреса доставки</h3>
-                    {addressesLoading && <p className="text-sm opacity-60">Завантаження...</p>}
+                    <h3 className="text-sm font-semibold text-[var(--text)] mb-2">{t('shippingAddress')}</h3>
+                    {addressesLoading && <p className="text-sm opacity-60">{t('loading')}</p>}
                     <div className="flex flex-col gap-2">
                         {addresses?.map((address) => (
                             <label
                                 key={address.id}
                                 className={`border rounded-lg p-3 cursor-pointer flex items-center gap-2 transition-colors
-                                    ${selectedAddressId === address.id
+                                ${selectedAddressId === address.id
                                     ? "border-[var(--btn)] bg-[var(--btn)]/10"
                                     : "border-gray-300"}`}
                             >
@@ -90,26 +92,26 @@ const OrderModal = ({isOpen, onClose}: OrderModalProps) => {
                                     onChange={() => setSelectedAddressId(address.id)}
                                 />
                                 <span className="text-sm text-[var(--text)]">
-                                    {address.country}, {address.city}, {address.street} {address.houseNumber}
-                                </span>
+                                {address.country}, {address.city}, {address.street} {address.houseNumber}
+                            </span>
                             </label>
                         ))}
                         {!addressesLoading && addresses?.length === 0 && (
-                            <p className="text-sm opacity-60">Немає збережених адрес</p>
+                            <p className="text-sm opacity-60">{t('noSavedAddresses')}</p>
                         )}
                     </div>
                 </div>
 
                 {/* Вибір картки */}
                 <div className="mb-6">
-                    <h3 className="text-sm font-semibold text-[var(--text)] mb-2">Спосіб оплати</h3>
-                    {cardsLoading && <p className="text-sm opacity-60">Завантаження...</p>}
+                    <h3 className="text-sm font-semibold text-[var(--text)] mb-2">{t('paymentMethod')}</h3>
+                    {cardsLoading && <p className="text-sm opacity-60">{t('loading')}</p>}
                     <div className="flex flex-col gap-2">
                         {cards?.map((card) => (
                             <label
                                 key={card.id}
                                 className={`border rounded-lg p-3 cursor-pointer flex items-center gap-2 transition-colors
-                                    ${selectedPaymentId === card.id
+                                ${selectedPaymentId === card.id
                                     ? "border-[var(--btn)] bg-[var(--btn)]/10"
                                     : "border-gray-300"}`}
                             >
@@ -120,12 +122,12 @@ const OrderModal = ({isOpen, onClose}: OrderModalProps) => {
                                     onChange={() => setSelectedPaymentId(card.id)}
                                 />
                                 <span className="text-sm text-[var(--text)]">
-                                    •••• {card.number?.slice(-4)}
-                                </span>
+                                •••• {card.number?.slice(-4)}
+                            </span>
                             </label>
                         ))}
                         {!cardsLoading && cards?.length === 0 && (
-                            <p className="text-sm opacity-60">Немає збережених карток</p>
+                            <p className="text-sm opacity-60">{t('noSavedCards')}</p>
                         )}
                     </div>
                 </div>
@@ -134,9 +136,9 @@ const OrderModal = ({isOpen, onClose}: OrderModalProps) => {
                     onClick={handleSubmit}
                     disabled={!canSubmit}
                     className="w-full h-[42px] bg-[var(--btn)] text-white text-sm font-semibold rounded-lg
-                               hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
+                           hover:opacity-90 transition-opacity disabled:opacity-40 disabled:cursor-not-allowed"
                 >
-                    {isSubmitting ? "Оформлення..." : "Підтвердити замовлення"}
+                    {isSubmitting ? t('placingOrder') : t('confirmOrder')}
                 </button>
             </div>
         </div>

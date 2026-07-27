@@ -3,13 +3,25 @@ import Icon from "@/app/[lng]/UI/Icon";
 
 import React from "react";
 
+import {getT} from "next-i18next/server";
+import {Metadata} from "next";
+type PageProps = { params: Promise<{ lng: string }> }
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+    const { lng } = await params
+    const { t } = await getT('pages', { lng })
+    return { title: t('favourite') }
+}
+
 
 const Favourite = async ({params} : {params : Promise<{lng:string}>}) => {
+
     const {lng} = await params;
+    const {t} = await getT('profile', {lng});
     return (
         <div className="p-8 min-h-screen">
             <div className="flex flex-row gap-2 py-4 mb-4 justify-between items-center ">
-                <span className='text-[var(--text)] text-3xl font-semibold'>Favourites</span>
+                <span className='text-[var(--text)] text-3xl font-semibold'>{t("favourite")}</span>
             </div>
             <div className="flex flex-col gap-3 w-full ">
                 <FavouriteList lng={lng} />

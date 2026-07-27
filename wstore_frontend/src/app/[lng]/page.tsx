@@ -14,8 +14,8 @@ type PageProps = { params: Promise<{ lng: string }> }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
     const { lng } = await params
-    const { t } = await getT('home', { lng })
-    return { title: `WStore ` }
+    const { t } = await getT('pages', { lng })
+    return { title: t('home') }
 }
 
 export default async function HomePage({ params }: PageProps) {
