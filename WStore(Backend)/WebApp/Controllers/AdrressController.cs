@@ -1,13 +1,16 @@
 using Core.Interfaces;
 using Core.Models.Product.Adrress;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApplication1.Controlers;
 [Route("api/[controller]/[action]")]
 [ApiController]
+[Authorize]
 public class AddressController(IAddressService addressService) : ControllerBase
 {
     [HttpGet]
+    
     public async Task<IActionResult> GetAddressesByUser()
     {
         var items = await addressService.GetAddressByUser();

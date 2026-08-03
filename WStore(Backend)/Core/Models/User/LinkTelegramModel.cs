@@ -1,6 +1,6 @@
 namespace Core.Models.User;
 
-public class LinkTelegramModel
+public sealed record LinkTelegramModel
 {
     public long ChatId { get; set; }
 }

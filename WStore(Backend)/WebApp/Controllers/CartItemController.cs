@@ -8,13 +8,13 @@ using Microsoft.AspNetCore.Mvc;
 namespace WebApplication1.Controlers;
 [Route("api/[controller]/[action]")]
 [ApiController]
-[Authorize(Roles = "StoreOwner, Admin")]
+[Authorize]
 public class CartItemController(ICartItemService cartItemService) : ControllerBase
 {
     private string Lang =>
         Request.Headers["Accept-Language"].FirstOrDefault() ?? "en";
     [HttpGet]
-    [AllowAnonymous]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetCartItems()
     {
         var list = await cartItemService.GetAllCartItems();
@@ -29,7 +29,7 @@ public class CartItemController(ICartItemService cartItemService) : ControllerBa
     }
 
     [HttpPost]
-    [AllowAnonymous]
+    
     public async Task<IActionResult> AddCartItem(CartItemAddUpdateModel model)
     {
         await cartItemService.AddCartItem(model);
@@ -64,11 +64,6 @@ public class CartItemController(ICartItemService cartItemService) : ControllerBa
         return Ok(list);
     }
 
-    [HttpGet]
-    public async Task<IActionResult> Search(string query, int pageNumber = 1, int pageSize = 10)
-    {
-        var items = await cartItemService.SearchCartItems(query,  Lang, pageNumber, pageSize);
-        return Ok(items);
-    }
+    
 
 }

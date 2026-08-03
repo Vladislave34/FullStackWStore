@@ -1,6 +1,6 @@
 namespace Core.Models.User;
 
-public class ForgotPasswordModel
+public sealed record ForgotPasswordModel
 {
     public string Email { get; set; } = String.Empty;
 }

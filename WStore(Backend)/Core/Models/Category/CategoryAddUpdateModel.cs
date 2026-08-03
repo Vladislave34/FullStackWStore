@@ -2,10 +2,10 @@ using Microsoft.AspNetCore.Http;
 
 namespace Core.Models.Category;
 
-public class CategoryAddUpdateModel
+public sealed record CategoryAddUpdateModel
 {
-    public string Name { get; set; }
+    public string Name { get; init; }
     
-    public string NameUk { get; set; } = null!;
-    public IFormFile Image { get; set; }
+    public string NameUk { get; init; } = null!;
+    public IFormFile Image { get; init; }
 }

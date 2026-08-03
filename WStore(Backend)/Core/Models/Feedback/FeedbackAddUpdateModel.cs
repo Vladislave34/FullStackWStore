@@ -2,10 +2,10 @@ using Microsoft.AspNetCore.Http;
 
 namespace Core.Models.Feedback;
 
-public class FeedbackAddUpdateModel
+public sealed record FeedbackAddUpdateModel
 {
-    public string Text { get; set; }
-    public int Rating { get; set; }
-    public Guid ProductId { get; set; }
-    public List<IFormFile> Images { get; set; } = new List<IFormFile>();
+    public string Text { get; init; }
+    public int Rating { get; init; }
+    public Guid ProductId { get; init; }
+    public List<IFormFile> Images { get; init; } = new List<IFormFile>();
 }

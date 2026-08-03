@@ -7,7 +7,7 @@ namespace WebApplication1.Controlers;
 [Route("api/[controller]/[action]")]
 [ApiController]
 
-[Authorize(Roles = "StoreOwner, Admin")]
+[Authorize(Roles = "Admin")]
 public class CategoryController(ICategoryService categoryService): ControllerBase
 {
     private string Lang =>

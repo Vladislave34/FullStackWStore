@@ -1,11 +1,13 @@
 using Core.Interfaces;
 using Core.Models.Product.Adrress;
 using Core.Models.Product.Payment;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApplication1.Controlers;
 [Route("api/[controller]/[action]")]
 [ApiController]
+[Authorize]
 
 public class PaymentController(IPaymentService paymentService) : ControllerBase
 {

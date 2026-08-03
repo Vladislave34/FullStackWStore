@@ -28,6 +28,7 @@ public class OrderController(IOrderService orderService) : ControllerBase
     }
 
     [HttpPut("{id}")]
+    [Authorize(Roles = "Admin,StoreOwner")]
     public async Task<IActionResult> CancelOrder(Guid id)
     {
         await orderService.CancelOrder(id);
@@ -49,6 +50,7 @@ public class OrderController(IOrderService orderService) : ControllerBase
         return Ok(orders);
     }
     [HttpGet]
+    [Authorize(Roles = "Admin,StoreOwner")]
     public async Task<IActionResult> GetOrdersByStore()
     {
         var orders = await orderService.GetOrdersForStore();

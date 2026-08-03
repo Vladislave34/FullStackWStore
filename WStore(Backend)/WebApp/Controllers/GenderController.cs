@@ -7,6 +7,7 @@ using Org.BouncyCastle.Asn1.Ocsp;
 namespace WebApplication1.Controlers;
 [Route("api/[controller]/[action]")]
 [ApiController]
+[AllowAnonymous]
 
 
 public class GenderController(IGenderService genderService) :  ControllerBase

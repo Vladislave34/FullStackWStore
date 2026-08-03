@@ -25,12 +25,11 @@ public class CartService(AppStoreContext  context, IRedisService redisService, I
         Guid userId = await authService.GetUserIdAsync();
 
         if (await context.Carts.AnyAsync(x => x.UserId == userId && !x.IsDeleted))
-            throw new Exception("User had cart");
+            throw new Exception("User already has a cart"); 
 
         var entity = new CartEntity()
         {
             UserId = userId,
-            IsDeleted = false,
         };
 
         await context.Carts.AddAsync(entity);
@@ -61,18 +60,17 @@ public class CartService(AppStoreContext  context, IRedisService redisService, I
 
     public async Task UpdateCart(Guid id, CartAddUpdateModel model)
     {
-        var entity = await context.Carts.FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted);
+        var userId = await authService.GetUserIdAsync();
+        var entity = await context.Carts
+            .FirstOrDefaultAsync(x => x.Id == id && x.UserId == userId && !x.IsDeleted);
 
         if (entity == null)
-        {
-            throw new Exception("Item not found");
-        }
+            throw new Exception("Cart not found");
 
         mapper.Map(model, entity);
         await context.SaveChangesAsync();
 
         var item = mapper.Map<CartItemModel>(entity);
-
         await redisService.SetAsync(CartByIdKey(id), item, CacheDuration);
         await redisService.RemoveAsync(AllCartsKey);
         await redisService.RemoveAsync(CartByUserKey(entity.UserId));
@@ -80,11 +78,12 @@ public class CartService(AppStoreContext  context, IRedisService redisService, I
 
     public async Task RemoveCart(Guid id)
     {
-        var entity = await context.Carts.FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted);
+        var userId = await authService.GetUserIdAsync();
+        var entity = await context.Carts
+            .FirstOrDefaultAsync(x => x.Id == id && x.UserId == userId && !x.IsDeleted);
+
         if (entity == null)
-        {
-            throw new Exception("Item not found");
-        }
+            throw new Exception("Cart not found");
 
         entity.IsDeleted = true;
         await context.SaveChangesAsync();

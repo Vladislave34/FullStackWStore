@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Core.Models.User;
 
-public class EditProfileModel
+public sealed record EditProfileModel
 {
     public string? FirstName { get; set; } 
     public string? LastName { get; set; }

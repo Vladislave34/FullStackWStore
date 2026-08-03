@@ -1,6 +1,6 @@
 namespace Core.Models.User;
 
-public class RefreshTokenRequestModel
+public sealed record RefreshTokenRequestModel
 {
     public string RefreshToken { get; set; }
 }

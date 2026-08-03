@@ -66,7 +66,7 @@ public class ColorService(AppStoreContext context, IMapper mapper) : IColorServi
     private static ColorItemModel Localize(ColorItemModel model, string lang)
     {
         if (lang.StartsWith("uk", StringComparison.OrdinalIgnoreCase))
-            model.Name = model.NameUk ?? model.Name;
+            model = model with { Name = model.NameUk ?? model.Name };
 
         return model;
     }

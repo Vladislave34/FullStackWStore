@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Domain.Migrations
 {
     [DbContext(typeof(AppStoreContext))]
-    [Migration("20260713160736_fix")]
-    partial class fix
+    [Migration("20260731163231_Fix-UserEntity-4")]
+    partial class FixUserEntity4
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -86,7 +86,8 @@ namespace Domain.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("Carts");
                 });
@@ -434,11 +435,11 @@ namespace Domain.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
-                    b.Property<Guid>("OrderStatusId")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid>("PaymentId")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
 
                     b.Property<decimal>("TotalPrice")
                         .HasColumnType("numeric");
@@ -453,43 +454,11 @@ namespace Domain.Migrations
 
                     b.HasIndex("AdrressId");
 
-                    b.HasIndex("OrderStatusId");
-
                     b.HasIndex("PaymentId");
 
                     b.HasIndex("UserId");
 
                     b.ToTable("Orders");
-                });
-
-            modelBuilder.Entity("Domain.Entities.OrderHistoryEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<Guid>("OrderId")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("StatusId")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrderId");
-
-                    b.HasIndex("StatusId");
-
-                    b.ToTable("OrderHistories");
                 });
 
             modelBuilder.Entity("Domain.Entities.OrderItemEntity", b =>
@@ -526,30 +495,6 @@ namespace Domain.Migrations
                     b.HasIndex("ProductVariantId");
 
                     b.ToTable("OrderItems");
-                });
-
-            modelBuilder.Entity("Domain.Entities.OrderStatusEntity", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("OrderStatuses");
                 });
 
             modelBuilder.Entity("Domain.Entities.PaymentEntity", b =>
@@ -955,8 +900,8 @@ namespace Domain.Migrations
             modelBuilder.Entity("Domain.Entities.CartEntity", b =>
                 {
                     b.HasOne("Domain.Entities.Identity.UserEntity", "User")
-                        .WithMany("Carts")
-                        .HasForeignKey("UserId")
+                        .WithOne("Carts")
+                        .HasForeignKey("Domain.Entities.CartEntity", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -1039,12 +984,6 @@ namespace Domain.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.OrderStatusEntity", "OrderStatus")
-                        .WithMany("Order")
-                        .HasForeignKey("OrderStatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Domain.Entities.PaymentEntity", "Payment")
                         .WithMany("Orders")
                         .HasForeignKey("PaymentId")
@@ -1059,30 +998,9 @@ namespace Domain.Migrations
 
                     b.Navigation("Adrress");
 
-                    b.Navigation("OrderStatus");
-
                     b.Navigation("Payment");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Domain.Entities.OrderHistoryEntity", b =>
-                {
-                    b.HasOne("Domain.Entities.OrderEntity", "Order")
-                        .WithMany("Histories")
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.OrderStatusEntity", "Status")
-                        .WithMany()
-                        .HasForeignKey("StatusId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Order");
-
-                    b.Navigation("Status");
                 });
 
             modelBuilder.Entity("Domain.Entities.OrderItemEntity", b =>
@@ -1295,7 +1213,8 @@ namespace Domain.Migrations
                 {
                     b.Navigation("Addresses");
 
-                    b.Navigation("Carts");
+                    b.Navigation("Carts")
+                        .IsRequired();
 
                     b.Navigation("Feedbacks");
 
@@ -1310,14 +1229,7 @@ namespace Domain.Migrations
 
             modelBuilder.Entity("Domain.Entities.OrderEntity", b =>
                 {
-                    b.Navigation("Histories");
-
                     b.Navigation("Items");
-                });
-
-            modelBuilder.Entity("Domain.Entities.OrderStatusEntity", b =>
-                {
-                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("Domain.Entities.PaymentEntity", b =>

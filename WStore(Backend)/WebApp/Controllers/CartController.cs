@@ -7,11 +7,11 @@ using Microsoft.AspNetCore.Mvc;
 namespace WebApplication1.Controlers;
 [Route("api/[controller]/[action]")]
 [ApiController]
-[Authorize(Roles = "StoreOwner, Admin")]
+[Authorize]
 public class CartController(ICartService cartService) : ControllerBase
 {
     [HttpGet]
-    [AllowAnonymous]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetCarts()
     {
         var list = await cartService.GetAllCarts();
@@ -47,6 +47,7 @@ public class CartController(ICartService cartService) : ControllerBase
     }
 
     [HttpDelete]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> RemoveAllCarts()
     {
         await cartService.RemoveAllCarts();

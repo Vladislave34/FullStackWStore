@@ -1,12 +1,12 @@
 namespace Core.Models.Product.Payment;
 
-public class PaymentItemModel
+public sealed record PaymentItemModel
 {
-    public Guid Id { get; set; }
-    public string Number { get; set; }
-    public string Date { get; set; }
+    public Guid Id { get; init; }
+    public string Number { get; init; }
+    public string Date { get; init; }
     
-    public string CVV { get; set; }
-    public string OwnerName { get; set; }
-    public string PaymentSystem { get; set; }
+    public string CVV { get; init; }
+    public string OwnerName { get; init; }
+    public string PaymentSystem { get; init; }
 }

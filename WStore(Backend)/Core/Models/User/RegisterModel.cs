@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Core.Models.User;
 
-public class RegisterModel
+public sealed record RegisterModel
 {
     public string FirstName { get; set; } = null!;
     

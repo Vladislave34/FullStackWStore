@@ -1,12 +1,12 @@
 namespace Core.Models.Product;
 
-public class ProductAddUpdateModel
+public sealed record ProductAddUpdateModel
 {
-    public string Name { get; set; }
-    public string NameUk { get; set; }
-    public string? Description { get; set; }
-    public string? DescriptionUk { get; set; }
-    public Guid GenderId { get; set; }
-    public Guid CategoryId { get; set; }
-    public Guid StoreId { get; set; }
+    public string Name { get; init; }
+    public string NameUk { get; init; }
+    public string? Description { get; init; }
+    public string? DescriptionUk { get; init; }
+    public Guid GenderId { get; init; }
+    public Guid CategoryId { get; init; }
+    public Guid StoreId { get; init; }
 }

@@ -13,6 +13,12 @@ public class CartItemService(AppStoreContext  context, IRedisService redisServic
 {
     public async Task AddCartItem(CartItemAddUpdateModel model)
     {
+        var userId = await authService.GetUserIdAsync();
+        var ownsCart = await context.Carts
+            .AnyAsync(x => x.Id == model.CartId && x.UserId == userId);
+        if (!ownsCart)
+            throw new Exception("This cart does not belong to you");
+
         var existing = await context.CartItems
             .FirstOrDefaultAsync(x => x.CartId == model.CartId
                                       && x.ProductVariantId == model.ProductVariantId
@@ -27,19 +33,19 @@ public class CartItemService(AppStoreContext  context, IRedisService redisServic
             await redisService.SetAsync($"cartitem:{item_.Id}", item_, TimeSpan.FromMinutes(10));
             await redisService.RemoveAsync("cartitems:all");
             await redisService.RemoveByPrefixAsync("cartitems:all:");
-            //await searchService.IndexCartItemAsync(existing);
+            await redisService.RemoveByPrefixAsync($"cartitems:all:{userId}");
             return;
         }
 
         var entity = mapper.Map<CartItemEntity>(model);
         await context.CartItems.AddAsync(entity);
         await context.SaveChangesAsync();
-        //await searchService.IndexCartItemAsync(entity);
 
         var item = mapper.Map<CartItemItemModel>(entity);
         await redisService.SetAsync($"cartitem:{item.Id}", item, TimeSpan.FromMinutes(10));
         await redisService.RemoveAsync("cartitems:all");
         await redisService.RemoveByPrefixAsync("cartitems:all:");
+        await redisService.RemoveByPrefixAsync($"cartitems:all:{userId}");
     }
 
     public async Task UpdateCartItem(Guid id, CartItemAddUpdateModel model)
@@ -142,47 +148,5 @@ public class CartItemService(AppStoreContext  context, IRedisService redisServic
         return items;
     }
 
-    public async Task<PageResult<CartItemItemModel>> SearchCartItems(
-        string query, string lang, int pageNumber = 1, int pageSize = 10)
-    {
-        var userId = await authService.GetUserIdAsync();
-        string key = $"cartitems:search:query:{query}:{lang}:{pageNumber}:{pageSize}";
-        var cached = await redisService.GetAsync<PageResult<CartItemItemModel>>(key);
-
-        if (cached != null)
-            return cached;
-
-        var (ids, totalCount) = await searchService.SearchCartItemAsync(query, lang, pageNumber, pageSize);
-
-        var entities = await context.CartItems
-            .Include(x => x.ProductVariant)
-            .Include(x => x.ProductVariant.Color)
-            .Include(x => x.ProductVariant.Size)
-            .Include(x => x.ProductVariant.Sale)
-            .Include(x => x.ProductVariant.Image.Where(i=>!i.IsDeleted))
-            .Include(x => x.ProductVariant.Product)
-            .Where(x => ids.Contains(x.Id) && !x.IsDeleted && x.Cart.UserId == userId)
-            .AsNoTracking()
-            .ToListAsync();
-
-        var mapped = mapper.Map<List<CartItemItemModel>>(entities);
-
-        var ordered = ids
-            .Select(id => mapped.FirstOrDefault(e => e.Id == id))
-            .Where(e => e != null)
-            .Select(e => e!)
-            .ToList();
-
-        var result = new PageResult<CartItemItemModel>
-        {
-            Data = ordered,
-            TotalCount = totalCount,
-            CurrentPage = pageNumber,
-            PageSize = pageSize
-        };
-
-        await redisService.SetAsync(key, result, TimeSpan.FromMinutes(10));
-        return result;
-    }
     
 }

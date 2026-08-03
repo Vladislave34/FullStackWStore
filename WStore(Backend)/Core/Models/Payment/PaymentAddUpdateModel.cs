@@ -1,11 +1,11 @@
 namespace Core.Models.Product.Payment;
 
-public class PaymentAddUpdateModel
+public sealed record PaymentAddUpdateModel
 {
-    public string Number { get; set; }
-    public string Date { get; set; }
+    public string Number { get; init; }
+    public string Date { get; init; }
     
-    public string CVV { get; set; }
-    public string OwnerName { get; set; }
-    public string PaymentSystem { get; set; }
+    public string CVV { get; init; }
+    public string OwnerName { get; init; }
+    public string PaymentSystem { get; init; }
 }

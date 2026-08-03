@@ -1,9 +1,9 @@
 namespace Core.Models.Color;
 
-public class ColorItemModel
+public sealed record ColorItemModel
 {
-    public Guid Id { get; set; }
-    public string Name { get; set; }
-    public string NameUk { get; set; }
-    public string Hex { get; set; }
+    public Guid Id { get; init; }
+    public string Name { get; init; }
+    public string NameUk { get; init; }
+    public string Hex { get; init; }
 }

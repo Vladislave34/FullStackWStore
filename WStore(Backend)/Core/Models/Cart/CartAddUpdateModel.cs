@@ -1,6 +1,6 @@
 namespace Core.Models.Cart;
 
-public class CartAddUpdateModel
+public sealed record CartAddUpdateModel
 {
-    public List<Guid> Cartitems { get; set; } = new List<Guid>();
+    public List<Guid> Cartitems { get; init; } = new List<Guid>();
 }

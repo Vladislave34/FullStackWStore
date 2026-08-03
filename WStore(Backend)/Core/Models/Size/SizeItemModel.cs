@@ -1,7 +1,7 @@
 namespace Core.Models.Size;
 
-public class SizeItemModel
+public sealed record SizeItemModel
 {
-    public Guid Id { get; set; }
-    public string Name { get; set; }
+    public Guid Id { get; init; }
+    public string Name { get; init; }
 }

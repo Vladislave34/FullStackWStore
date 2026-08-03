@@ -1,10 +1,10 @@
 namespace Core.Models.Product.Adrress;
 
-public class AddressItemModel
+public sealed record AddressItemModel
 {
-    public Guid Id { get; set; }
-    public string City { get; set; }
-    public string Country { get; set; }
-    public string Street { get; set; }
-    public string HouseNumber { get; set; }
+    public Guid Id { get; init; }
+    public string City { get; init; }
+    public string Country { get; init; }
+    public string Street { get; init; }
+    public string HouseNumber { get; init; }
 }

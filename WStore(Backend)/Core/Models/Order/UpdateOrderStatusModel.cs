@@ -1,6 +1,6 @@
 namespace Core.Models.Order;
 
-public class UpdateOrderStatusModel
+public sealed record UpdateOrderStatusModel
 {
-    public string Status { get; set; }
+    public string Status { get; init; }
 }

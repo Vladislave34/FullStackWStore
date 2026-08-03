@@ -83,8 +83,10 @@ public class ProductService(
 
     public async Task UpdateProduct(Guid id, ProductAddUpdateModel model)
     {
+        var userId = await authService.GetUserIdAsync();
         var entity = await context.Products.FindAsync(id)
             ?? throw new Exception("Product not found");
+        if(entity.Store.OwnerId != userId) throw new Exception("This product is not owned by the user");
 
         mapper.Map(model, entity);
         entity.UpdatedAt = DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc);

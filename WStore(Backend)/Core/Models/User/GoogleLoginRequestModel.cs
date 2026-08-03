@@ -1,6 +1,6 @@
 namespace Core.Models.User;
 
-public class GoogleLoginRequestModel
+public sealed record GoogleLoginRequestModel
 {
     public string IdToken { get; set; } = null!;
 }

@@ -9,7 +9,6 @@ import {
     FetchBaseQueryMeta,
     MutationDefinition
 } from "@reduxjs/toolkit/query";
-import {useParams, usePathname} from "next/navigation";
 import {useT} from "next-i18next/client";
 
 
@@ -44,9 +43,10 @@ interface OrderRowProps {
         statusId: string
     }, BaseQueryFn<string | FetchArgs, unknown, FetchBaseQueryError, {}, FetchBaseQueryMeta>, "Order", void, "orderApi", unknown>>;
     editableStatus?: boolean;
+    lng: string;
 }
 
-export function OrderRowForStore({ order, onStatusChange, editableStatus = false }: OrderRowProps) {
+export function OrderRowForStore({ order, onStatusChange, editableStatus = false, lng }: OrderRowProps) {
     const [open, setOpen] = useState(false);
     const [localStatus, setLocalStatus] = useState<OrderStatus>(order.orderStatus);
     const [updating, setUpdating] = useState(false);
@@ -115,7 +115,7 @@ export function OrderRowForStore({ order, onStatusChange, editableStatus = false
                                 className="text-sm font-medium truncate"
                                 style={{ color: "var(--text)" }}
                             >
-                                {firstItem?.productNameUk ?? "Замовлення"}
+                                {lng ==="en" ? firstItem?.productName : firstItem?.productNameUk}
                             </span>
                             {extraCount > 0 && (
                                 <span

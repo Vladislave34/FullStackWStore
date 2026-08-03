@@ -15,6 +15,5 @@ public interface ICartItemService
     Task<CartItemItemModel> GetCartItemById(Guid id);
     
     Task<IEnumerable<CartItemItemModel>> GetCartItemsByUser();
-    Task<PageResult<CartItemItemModel>> SearchCartItems(
-        string query, string lang, int pageNumber = 1, int pageSize = 10);
+   
 }

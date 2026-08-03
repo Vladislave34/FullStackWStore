@@ -2,6 +2,7 @@ using AutoMapper;
 using Core.Interfaces;
 using Core.Models.User;
 using Domain;
+using Domain.Entities;
 using Domain.Entities.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -9,8 +10,11 @@ using Microsoft.Extensions.Configuration;
 
 namespace Core.Services;
 
-public class UserService(IAuthService authService, IMapper mapper, AppStoreContext appStoreContext,  IConfiguration configuration,
-    IEmailSender smtpService, UserManager<UserEntity> userManager, IMinioImageService minioImageService, IJwtTokenService jwtTokenService) : IUserService
+public class UserService(IAuthService authService, IMapper mapper, AppStoreContext appStoreContext,
+    IConfiguration configuration, IEmailSender smtpService, UserManager<UserEntity> userManager,
+    IMinioImageService minioImageService, IJwtTokenService jwtTokenService, RoleManager<RoleEntity> roleManager, 
+    IMinioImageService imageService
+    ) : IUserService
 {
     public async Task<UserItemModel> GetUserProfileAsync()
     {
@@ -80,5 +84,57 @@ public class UserService(IAuthService authService, IMapper mapper, AppStoreConte
             return false;
         }
         return true;
+    }
+
+    public async Task<AuthResponseModel> Login(LoginModel model)
+    {
+        var user = await userManager.FindByEmailAsync(model.Email);
+        if (user == null || !await userManager.CheckPasswordAsync(user, model.Password))
+            throw new Exception("Invalid email or password.");
+
+        var response = await jwtTokenService.CreateAuthResponse(user);
+        return response;
+    }
+
+    public async Task<AuthResponseModel> Register(RegisterModel model)
+    {
+        var existingUser = await userManager.FindByEmailAsync(model.Email);
+        if (existingUser != null)
+            throw new Exception("User already exists.");
+
+        var user = new UserEntity
+        {
+            UserName = model.UserName,
+            Email = model.Email,
+            FirstName = model.FirstName,
+            LastName = model.LastName,
+            Image = await imageService.UploadImageAsync(model.Image)
+        };
+
+        var res = await userManager.CreateAsync(user, model.Password);
+        if (!res.Succeeded)
+            throw new Exception(res.Errors.ToString());
+        var entity = new CartEntity()
+        {
+            UserId = user.Id,
+        };
+        await appStoreContext.Carts.AddAsync(entity);
+        await appStoreContext.SaveChangesAsync();
+
+        if (!await roleManager.RoleExistsAsync("User"))
+            await roleManager.CreateAsync(new RoleEntity("User"));
+        await userManager.AddToRoleAsync(user, "User");
+
+        var response = await jwtTokenService.CreateAuthResponse(user);
+        return response;
+    }
+
+    public async Task LinkTelegram(LinkTelegramModel model)
+    {
+        var userId = await authService.GetUserIdAsync();
+        var user = await userManager.FindByIdAsync(userId.ToString());
+    
+        user.TelegramChatId = model.ChatId;
+        await userManager.UpdateAsync(user);
     }
 }

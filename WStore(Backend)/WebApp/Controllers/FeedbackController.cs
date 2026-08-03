@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace WebApplication1.Controlers;
 [ApiController]
 [Route("api/[controller]/[action]")]
-[Authorize(Roles = "StoreOwner, Admin")]
+[Authorize]
 public class FeedbackController(IFeedbackService feedbackService) : ControllerBase
 {
     [HttpGet("{productId}")]
@@ -19,6 +19,7 @@ public class FeedbackController(IFeedbackService feedbackService) : ControllerBa
     }
 
     [HttpGet("{id}")]
+   
     public async Task<IActionResult> GetFeedbackById(Guid id)
     {
         var variant = await feedbackService.GetFeedbackById(id);
@@ -41,13 +42,14 @@ public class FeedbackController(IFeedbackService feedbackService) : ControllerBa
     }
 
     [HttpDelete("{id}")]
-    public async Task<IActionResult> DeleteProductVariant(Guid id)
+    public async Task<IActionResult> DeleteFeedback(Guid id)
     {
         await feedbackService.RemoveFeedback(id);
         return Ok();
     }
 
     [HttpDelete]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> RemoveAllFeedbacks()
     {
         await feedbackService.RemoveAllFeedbacks();

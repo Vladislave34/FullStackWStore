@@ -1,7 +1,7 @@
 namespace Core.Models.Product.Sale;
 
-public class SaleItemModel
+public sealed record SaleItemModel
 {
-    public Guid Id { get; set; }
-    public int Percent { get; set; }
+    public Guid Id { get; init; }
+    public int Percent { get; init; }
 }

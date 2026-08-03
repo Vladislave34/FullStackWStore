@@ -1,6 +1,7 @@
 using Core.Interfaces;
 using Core.Models.Product.Statistics;
 using Domain;
+using Domain.Entities.Constants;
 using Microsoft.EntityFrameworkCore;
 
 namespace Core.Services;
@@ -14,7 +15,7 @@ public class StatisticService(AppStoreContext context, IRedisService redisServic
 
         var orders = await context.Orders
             .Where(x => !x.IsDeleted
-                        && x.OrderStatusId == new Guid("019f5637-4b62-71a1-bf11-7640263504c3")
+                        && x.Status == OrderStatus.Delivered
                         && x.CreatedAt >= from
                         && x.CreatedAt < to)
             .ToListAsync();
@@ -54,10 +55,10 @@ public class StatisticService(AppStoreContext context, IRedisService redisServic
     {
         
         
-        var completedStatusId = new Guid("019f5637-4b62-71a1-bf11-7640263504c3");
+      
 
         var stats = await context.Orders
-            .Where(o => !o.IsDeleted && o.OrderStatusId == completedStatusId)
+            .Where(o => !o.IsDeleted && o.Status == OrderStatus.Delivered)
             .SelectMany(o => o.Items)
             .GroupBy(i => i.ProductVariant.Product.CategoryId)
             .Select(g => new

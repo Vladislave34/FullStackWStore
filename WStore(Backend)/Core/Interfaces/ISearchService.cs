@@ -6,7 +6,7 @@ namespace Core.Interfaces;
 public interface ISearchService
 {
     Task IndexProductAsync(ProductEntity product);
-    Task IndexCartItemAsync(CartItemEntity cartItem);
+   
 
     Task EnsureIndexCreatedAsync();
     
@@ -21,7 +21,6 @@ public interface ISearchService
         Guid? colorId, Guid? sizeId,
         int pageNumber, int pageSize);
 
-    Task<(List<Guid> Ids, int TotalCount)> SearchCartItemAsync(
-        string query, string lang, int pageNumber, int pageSize);
+    
 
 }

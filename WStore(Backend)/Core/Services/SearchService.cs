@@ -12,7 +12,7 @@ namespace Core.Services;
 public class SearchService(IElasticClient elasticClient, IMapper mapper, AppStoreContext context) : ISearchService
 {
     private const string Index = "products";
-    private const string IndexCartItem = "cart-items";
+    
 
     public async Task IndexProductAsync(ProductEntity product)
     {
@@ -65,27 +65,7 @@ public class SearchService(IElasticClient elasticClient, IMapper mapper, AppStor
             throw new Exception($"Не вдалося створити індекс: {createResponse.DebugInformation}");
     }
 
-    public async Task IndexCartItemAsync(CartItemEntity cartItem)
-    {
-        var entity = await context.CartItems
-            .Include(x=>x.ProductVariant)
-            .Include(x=>x.ProductVariant.Color)
-            .Include(x=>x.ProductVariant.Size)
-            .Include(x=>x.ProductVariant.Sale)
-            .Include(x=>x.ProductVariant.Image)
-            .Include(x=>x.ProductVariant.Product)
-            .FirstOrDefaultAsync(x=> x.Id == cartItem.Id && !x.IsDeleted);
-        var doc = mapper.Map<CartItemItemModel>(entity);
-        var response = await elasticClient.IndexAsync(doc, idx =>
-            idx.Index(IndexCartItem).Id(cartItem.Id)
-        );
-        if (!response.IsValid)
-        {
-            
-            throw new Exception($"Не вдалося проіндексувати товар {cartItem.Id}");
-        }
-
-    }
+    
 
     public async Task<(List<Guid> Ids, int TotalCount)> SearchAsync(
         string query, string lang, Guid? storeId, Guid? categoryId, int pageNumber, int pageSize)
@@ -133,57 +113,6 @@ public class SearchService(IElasticClient elasticClient, IMapper mapper, AppStor
         Console.WriteLine($"[DEBUG RESULT] ids.Count={ids.Count}, total={response.Total}");
         return (ids, (int)response.Total);
     }
-    /*
-    public async Task<(List<Guid> Ids, int TotalCount)> SearchAsync(
-        string? query, string lang, Guid? categoryId, Guid? genderId, int a, int pageNumber, int pageSize)
-    {
-        var nameField = lang.StartsWith("uk") ? "nameUk" : "name";
-        var descField = lang.StartsWith("uk") ? "descriptionUk" : "description";
-
-        var filters = new List<Func<QueryContainerDescriptor<ProductSearchModel>, QueryContainer>>();
-
-        if (categoryId.HasValue)
-            filters.Add(f => f.Term(t => t
-                .Field("categoryId.keyword")
-                .Value(categoryId.Value.ToString())));
-
-        if (genderId.HasValue)
-            filters.Add(f => f.Term(t => t
-                .Field("genderId.keyword")
-                .Value(genderId.Value.ToString())));
-
-        
-
-        var response = await elasticClient.SearchAsync<ProductSearchModel>(s => s
-            .Index(Index)
-            .From((pageNumber - 1) * pageSize)
-            .Size(pageSize)
-            .Query(q => q.Bool(b =>
-            {
-                b.Filter(filters.ToArray());
-
-                if (!string.IsNullOrWhiteSpace(query))
-                {
-                    b.Must(m => m.MultiMatch(mm => mm
-                        .Query(query)
-                        .Fields(new[] { $"{nameField}^2", descField })
-                        .Fuzziness(Fuzziness.Auto)));
-                }
-                else
-                {
-                    b.Must(m => m.MatchAll());
-                }
-
-                return b;
-            }))
-        );
-
-        if (!response.IsValid)
-            throw new Exception($"Помилка пошуку: {response.DebugInformation}");
-
-        var ids = response.Documents.Select(d => d.Id).ToList();
-        return (ids, (int)response.Total);
-    }*/
     
     public async Task<(List<Guid> Ids, int TotalCount)> SearchAsync(
     string? query, string lang, Guid? categoryId, Guid? genderId,
@@ -260,27 +189,6 @@ public class SearchService(IElasticClient elasticClient, IMapper mapper, AppStor
     return (ids, (int)response.Total);
 }
 
-    public async Task<(List<Guid> Ids, int TotalCount)> SearchCartItemAsync(
-        string query, string lang, int pageNumber, int pageSize)
-    {
-        var nameField = lang.StartsWith("uk") ? "nameUk" : "name";
-
-        var response = await elasticClient.SearchAsync<CartItemItemModel>(s => s
-            .Index(IndexCartItem)
-            .From((pageNumber - 1) * pageSize)
-            .Size(pageSize)
-            .Query(q => q.Match(mm => mm
-                .Field(nameField)
-                .Query(query)
-                .Fuzziness(Fuzziness.Auto)))
-        );
-
-        if (!response.IsValid)
-            throw new Exception($"Помилка пошуку: {response.DebugInformation}");
-
-        var ids = response.Documents.Select(d => d.Id).ToList();
-        return (ids, (int)response.Total);
-    }
     
     
     public async Task DeleteProductAsync(Guid id)

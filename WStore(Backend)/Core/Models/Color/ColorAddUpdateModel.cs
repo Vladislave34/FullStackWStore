@@ -1,9 +1,9 @@
 namespace Core.Models.Color;
 
-public class ColorAddUpdateModel
+public sealed record ColorAddUpdateModel
 {
-    public string Name { get; set; }
-    public string NameUk { get; set; }
-    public string Hex { get; set; }
+    public string Name { get; init; }
+    public string NameUk { get; init; }
+    public string Hex { get; init; }
     
 }

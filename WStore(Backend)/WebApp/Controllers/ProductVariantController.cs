@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace WebApplication1.Controlers;
 [ApiController]
 [Route("api/[controller]/[action]")]
-[Authorize(Roles = "StoreOwner, Admin")]
+[Authorize(Roles = "StoreOwner,Admin")]
 public class ProductVariantController(IProductVariantServices productVariantServices) : ControllerBase
 {
     [HttpGet("{productId}")]
@@ -47,6 +47,7 @@ public class ProductVariantController(IProductVariantServices productVariantServ
     }
 
     [HttpDelete]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> RemoveAllProductVariants()
     {
         await productVariantServices.RemoveAllProductVariants();

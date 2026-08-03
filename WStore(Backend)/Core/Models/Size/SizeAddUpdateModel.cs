@@ -1,6 +1,6 @@
 namespace Core.Models.Size;
 
-public class SizeAddUpdateModel
+public sealed record SizeAddUpdateModel
 {
-    public string Name { get; set; }
+    public string Name { get; init; }
 }

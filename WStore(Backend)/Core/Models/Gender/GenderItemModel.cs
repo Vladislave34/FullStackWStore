@@ -1,8 +1,8 @@
 namespace Core.Models.Product.Gender;
 
-public class GenderItemModel
+public sealed record GenderItemModel
 {
-    public Guid Id { get; set; }
-    public string Name { get; set; } = string.Empty;
-    public string NameUk { get; set; } = string.Empty;
+    public Guid Id { get; init; }
+    public string Name { get; init; } = string.Empty;
+    public string NameUk { get; init; } = string.Empty;
 }

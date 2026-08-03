@@ -1,5 +1,5 @@
 'use client'
-import { useRef } from "react";
+import {useRef, useState} from "react";
 import { Formik, Form, Field as FormikField, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import {useAppDispatch, useAppSelector} from "@/hooks/redux";
@@ -21,6 +21,7 @@ const EditProfileForm = () => {
     const user = useAppSelector(state => state.authSlice.user);
     const dispatch = useAppDispatch();
     const [editProfile, { isLoading }] = useEditProfileMutation();
+    const [chatId, setChatId] = useState('');
     const fileInputRef = useRef<HTMLInputElement>(null);
     const {t} = useT('edit_profile_form')
     const initialValues: IEditProfileModel = {
@@ -120,6 +121,7 @@ const EditProfileForm = () => {
                                 <InputField name="firstName" label={t('first_name')}     placeholder={t('first_name')} />
                                 <InputField name="username"  label={t('nickname')}  placeholder="username" />
                                 <InputField name="lastName"  label={t('last_name')} placeholder={t('last_name')} />
+
                             </div>
                         </div>
 
@@ -197,3 +199,4 @@ const InputField = ({
 );
 
 export default EditProfileForm;
+

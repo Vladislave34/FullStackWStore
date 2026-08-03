@@ -59,7 +59,7 @@ const schema = Yup.object({
 //
 
 const AddToCartForm = ({productVariantId, price, closeModal} : {productVariantId : string, price : number, closeModal: ()=>void}) => {
-    const [addCart] = cartApi.useAddCartMutation();
+    // const [addCart] = cartApi.useAddCartMutation();
     const [addToCart] = cartItemApi.useAddToCartMutation();
     const {data: hasCart} = cartApi.useHasCartQuery();
     const {data: cart} = cartApi.useGetCartByUserQuery(undefined, { skip: !hasCart }); // <-- завжди викликаний, але пропускається запит, якщо кошика немає
@@ -82,11 +82,12 @@ const AddToCartForm = ({productVariantId, price, closeModal} : {productVariantId
         if (hasCart && cart) {
             val.cartId = cart.id;
             await addToCart(val).unwrap();
-        } else {
-            const id = await addCart().unwrap();
-            val.cartId = id;
-            await addToCart(val).unwrap();
         }
+        // else {
+        //     const id = await addCart().unwrap();
+        //     val.cartId = id;
+        //     await addToCart(val).unwrap();
+        // }
         closeModal();
     }
 

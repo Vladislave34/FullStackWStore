@@ -5,12 +5,15 @@ import React from "react";
 import {orderApi} from "@/services/orderService";
 import OrderRowForStore from "@/app/[lng]/UI/OrderRowForStore";
 import {useT} from "next-i18next/client";
+import {usePathname} from "next/navigation";
 
 
 const Page = () => {
     const {t} = useT('profile')
     const {data} = orderApi.useGetOrdersForStoreQuery();
     const [editStatus] = orderApi.useUpdateStatusMutation();
+    const pathname = usePathname();
+    const lng = pathname.split('/')[1] ?? "en";
     return (
         <div className="p-8 min-h-screen">
             <div className="flex flex-row gap-2 py-4 mb-4 justify-between items-center ">
@@ -20,7 +23,7 @@ const Page = () => {
                 </Icon>
             </div>
             <div className="flex flex-col gap-3 w-full ">
-                {data?.map((order) => (<OrderRowForStore order={order} editableStatus={true} onStatusChange={editStatus} key={order.id} />))}
+                {data?.map((order) => (<OrderRowForStore order={order} editableStatus={true} onStatusChange={editStatus} key={order.id} lng={lng}  />))}
 
             </div>
         </div>

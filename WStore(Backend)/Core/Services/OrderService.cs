@@ -4,6 +4,7 @@ using Core.Interfaces;
 using Core.Models.Order;
 using Domain;
 using Domain.Entities;
+using Domain.Entities.Constants;
 using Microsoft.EntityFrameworkCore;
 
 namespace Core.Services;
@@ -32,18 +33,16 @@ public class OrderService(
         if (!cart.Items.Any())
             throw new Exception("Cart is empty");
 
-        // 2. статус Pending
-        var pendingStatus = await context.OrderStatuses
-            .FirstOrDefaultAsync(x => x.Name == "Pending");
+        
+        
 
-        if (pendingStatus == null)
-            throw new Exception("OrderStatus 'Pending' not found");
+        
 
-        // 3. створюємо замовлення
+        
         var order = new OrderEntity
         {
             UserId = userId,
-            OrderStatusId = pendingStatus.Id,
+            Status = OrderStatus.Pending,
             TotalPrice = cart.Items
                 .Where(x => model.CartItemIds.Contains(x.Id))
                 .Sum(x => x.Price),
@@ -60,25 +59,20 @@ public class OrderService(
         await context.Orders.AddAsync(order);
         await context.SaveChangesAsync();
 
-        // 4. записуємо в історію
-        await context.Set<OrderHistoryEntity>().AddAsync(new OrderHistoryEntity
-        {
-            OrderId = order.Id,
-            StatusId = pendingStatus.Id
-        });
+        
 
-        // 5. очищаємо кошик (тільки вибрані товари)
+        
         var selectedItems = cart.Items.Where(x => model.CartItemIds.Contains(x.Id)).ToList();
+        if (!selectedItems.Any())
+            throw new Exception("No valid items selected");
         foreach (var cartItem in selectedItems)
             cartItem.IsDeleted = true;
 
-        // видаляємо сам кошик, тільки якщо всі товари з нього викуплені
-        //if (cart.Items.All(x => x.IsDeleted))
-        //    cart.IsDeleted = true;
+        
 
         await context.SaveChangesAsync();
 
-        // 6. кешуємо
+        
         await redisService.RemoveByPrefixAsync("orders");
         await redisService.RemoveByPrefixAsync("order");
         string cacheKey = $"cartitems:all:{userId}";
@@ -90,37 +84,33 @@ public class OrderService(
         var order = await context.Orders
             .Include(x => x.User)
             .FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted);
+        
 
         if (order == null)
             throw new Exception("Order not found");
+        if (order.Status is OrderStatus.Cancelled or OrderStatus.Delivered)
+            throw new Exception("Cannot cancel this order");
 
-        var status = await context.OrderStatuses.FirstOrDefaultAsync(x => x.Name == model.Status);
-        if (status == null)
-            throw new Exception("Status not found");
+        if (!Enum.TryParse<OrderStatus>(model.Status, ignoreCase: true, out var newStatus))
+            throw new Exception($"Invalid status: {model.Status}");
 
+        order.Status = newStatus;
 
-
-        order.OrderStatusId = status.Id;
-
-        // записуємо зміну в історію
-        await context.Set<OrderHistoryEntity>().AddAsync(new OrderHistoryEntity
-        {
-            OrderId = order.Id,
-            StatusId = status.Id
-        });
+        
 
         await context.SaveChangesAsync();
+
         if (order.User?.TelegramChatId != null)
         {
             await telegramService.SendOrderStatusAsync(
                 order.User.TelegramChatId.Value,
-                status.Name,
+                newStatus.ToString(),
                 order.Id
             );
         }
 
         await redisService.RemoveAsync($"order:{id}");
-        await redisService.RemoveByPrefixAsync($"orders");
+        await redisService.RemoveByPrefixAsync("orders");
     }
 
     public async Task CancelOrder(Guid id)
@@ -128,23 +118,17 @@ public class OrderService(
         var order = await context.Orders
             .Include(x => x.User)
             .FirstOrDefaultAsync(x => x.Id == id && !x.IsDeleted);
+        
 
         if (order == null)
             throw new Exception("Order not found");
+        if (order.Status is OrderStatus.Cancelled or OrderStatus.Delivered)
+            throw new Exception("Cannot cancel this order");
+        
 
-        var cancelledStatus = await context.OrderStatuses
-            .FirstOrDefaultAsync(x => x.Name == "Cancelled");
+        order.Status =  OrderStatus.Cancelled;
 
-        if (cancelledStatus == null)
-            throw new Exception("OrderStatus 'Cancelled' not found");
-
-        order.OrderStatusId = cancelledStatus.Id;
-
-        await context.Set<OrderHistoryEntity>().AddAsync(new OrderHistoryEntity
-        {
-            OrderId = order.Id,
-            StatusId = cancelledStatus.Id
-        });
+        
 
         await context.SaveChangesAsync();
 
@@ -160,7 +144,7 @@ public class OrderService(
 
         var items = await context.Orders
             .Where(x => !x.IsDeleted)
-            .Include(x => x.OrderStatus)
+            //.Include(x => x.Status)
             .Include(x => x.Items)
                 .ThenInclude(x => x.ProductVariant)
                     .ThenInclude(x => x.Product)
@@ -187,7 +171,7 @@ public class OrderService(
 
         var items = await context.Orders
             .Where(x => !x.IsDeleted && x.UserId == userId)
-            .Include(x => x.OrderStatus)
+            //.Include(x => x.Status)
             .Include(x => x.Items)
                 .ThenInclude(x => x.ProductVariant)
                     .ThenInclude(x => x.Product)
@@ -214,7 +198,7 @@ public class OrderService(
 
         var entity = await context.Orders
             .Where(x => x.Id == id && !x.IsDeleted)
-            .Include(x => x.OrderStatus)
+            //.Include(x => x.Status)
             .Include(x => x.Items)
                 .ThenInclude(x => x.ProductVariant)
                     .ThenInclude(x => x.Product)
@@ -237,6 +221,8 @@ public class OrderService(
     {
         var userId = await authService.GetUserIdAsync();
         var store = await context.Stores.FirstOrDefaultAsync(x => x.OwnerId == userId && !x.IsDeleted);
+        if (store == null)
+            throw new Exception("Store not found");
         string key = $"orders:store:{store.Id}";
         
 
@@ -244,8 +230,9 @@ public class OrderService(
         if (cache != null) return cache;
 
         var items = await context.Orders
-            .Where(x => !x.IsDeleted && x.UserId == store.OwnerId)
-            .Include(x => x.OrderStatus)
+            .Where(x => !x.IsDeleted && x.Items.Any(i => 
+                i.ProductVariant.Product.StoreId == store.Id))
+            //.Include(x => x.Status)
             .Include(x => x.Items)
             .ThenInclude(x => x.ProductVariant)
             .ThenInclude(x => x.Product)

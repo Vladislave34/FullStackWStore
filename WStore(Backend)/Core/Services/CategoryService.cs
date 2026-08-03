@@ -107,7 +107,7 @@ public class CategoryService(AppStoreContext context, IMapper mapper, IMinioImag
     private static CategoryItemModel Localize(CategoryItemModel model, string lang)
     {
         if (lang.StartsWith("uk", StringComparison.OrdinalIgnoreCase))
-            model.Name = model.NameUk ?? model.Name;
+            model = model with { Name = model.NameUk ?? model.Name };
 
         return model;
     }

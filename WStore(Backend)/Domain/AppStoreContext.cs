@@ -40,8 +40,8 @@ public class AppStoreContext
     public DbSet<ProductVariantImageEntity>  ProductVariantImages { get; set; }
     public DbSet<StoreImageEntity>  StoreImages { get; set; }
     public DbSet<FeedbackImageEntity>  FeedbackImages { get; set; }
-    public DbSet<OrderHistoryEntity>  OrderHistories { get; set; }
-    public DbSet<OrderStatusEntity>  OrderStatuses { get; set; }
+
+ 
     public DbSet<FeedbackEntity>   Feedbacks { get; set; }
     
     public DbSet<GenderEntity>  Genders { get; set; }

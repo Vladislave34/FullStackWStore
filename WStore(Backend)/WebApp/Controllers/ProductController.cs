@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 
 [ApiController]
 [Route("api/[controller]/[action]")]
-[Authorize(Roles = "StoreOwner, Admin")]
+[Authorize(Roles = "StoreOwner,Admin")]
 public class ProductController(IProductService productService) : ControllerBase
 {
     private string Lang =>
@@ -78,6 +78,7 @@ public class ProductController(IProductService productService) : ControllerBase
     }
 
     [HttpDelete]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> RemoveAllProducts()
     {
         await productService.RemoveAllProducts();

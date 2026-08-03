@@ -1,17 +1,18 @@
 import {useState} from "react";
 import Order, {OrderStatus} from "@/models/order/IOrderModel";
+import {useT} from "next-i18next/client";
 
 
-const statusMap: Record<OrderStatus, { label: string; dot: string }> = {
-    Pending: { label: "Очікує", dot: "#B4B2A9" },
-    Confirmed: { label: "Підтверджено", dot: "#378ADD" },
-    Processing: { label: "В обробці", dot: "#0C447C" },
-    Shipped: { label: "Відправлено", dot: "#854F0B" },
-    Delivered: { label: "Доставлено", dot: "#0F6E56" },
-    Cancelled: { label: "Скасовано", dot: "#E24B4A" },
-    Refunded: { label: "Повернено", dot: "#993C1D" },
-    Failed: { label: "Помилка", dot: "#791F1F" },
-};
+// const statusMap: Record<OrderStatus, { label: string; dot: string }> = {
+//     Pending: { label: "Очікує", dot: "#B4B2A9" },
+//     Confirmed: { label: "Підтверджено", dot: "#378ADD" },
+//     Processing: { label: "В обробці", dot: "#0C447C" },
+//     Shipped: { label: "Відправлено", dot: "#854F0B" },
+//     Delivered: { label: "Доставлено", dot: "#0F6E56" },
+//     Cancelled: { label: "Скасовано", dot: "#E24B4A" },
+//     Refunded: { label: "Повернено", dot: "#993C1D" },
+//     Failed: { label: "Помилка", dot: "#791F1F" },
+// };
 
 function formatDate(iso: string) {
     return new Date(iso).toLocaleDateString("uk-UA", {
@@ -25,11 +26,23 @@ function formatPrice(value: number) {
     return new Intl.NumberFormat("uk-UA").format(value) + " ₴";
 }
 
-export function OrderRow({ order }: { order: Order }) {
+export function OrderRow({ order, lng }: { order: Order, lng: string }) {
     const [open, setOpen] = useState(false);
+    const {t} = useT('order_status')
+    const statusMap: Record<OrderStatus, { label: string; dot: string }> = {
+        Pending: { label: t('Pending'), dot: "#B4B2A9" },
+        Confirmed: { label: t('Confirmed'), dot: "#378ADD" },
+        Processing: { label: t('Processing'), dot: "#0C447C" },
+        Shipped: { label: t('Shipped'), dot: "#854F0B" },
+        Delivered: { label: t('Delivered'), dot: "#0F6E56" },
+        Cancelled: { label: t('Cancelled'), dot: "#E24B4A" },
+        Refunded: { label: t('Refunded'), dot: "#993C1D" },
+        Failed: { label: t('Failed'), dot: "#791F1F" },
+    };
     const status = statusMap[order.orderStatus];
     const firstItem = order.items[0];
     const extraCount = order.items.length - 1;
+
 
     return (
         <div
@@ -48,7 +61,7 @@ export function OrderRow({ order }: { order: Order }) {
                     {firstItem?.images?.[0] && (
                         <img
                             src={firstItem.images[0]}
-                            alt={firstItem.productNameUk}
+                            alt={firstItem.productName}
                             className="w-full h-full object-cover"
                         />
                     )}
@@ -61,7 +74,7 @@ export function OrderRow({ order }: { order: Order }) {
                 className="text-sm font-medium truncate"
                 style={{ color: "var(--text)" }}
             >
-              {firstItem?.productNameUk ?? "Замовлення"}
+              {lng ==="en" ? firstItem?.productName : firstItem?.productNameUk}
             </span>
                         {extraCount > 0 && (
                             <span

@@ -1,6 +1,6 @@
 namespace Core.Models.User;
 
-public class LoginModel
+public sealed record LoginModel
 {
     /// <summary>
     /// Електронна пошта користувача

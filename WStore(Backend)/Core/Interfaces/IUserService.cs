@@ -6,9 +6,15 @@ namespace Core.Interfaces;
 public interface IUserService
 {
     Task<UserItemModel> GetUserProfileAsync();
-    public Task<bool> ForgotPasswordAsync(ForgotPasswordModel model);
-    public Task<bool> ResetPasswordAsync(ResetPasswordModel model);
-    public Task<AuthResponseModel> EditProfileAsync(EditProfileModel model);
+    Task<bool> ForgotPasswordAsync(ForgotPasswordModel model);
+    Task<bool> ResetPasswordAsync(ResetPasswordModel model);
+    Task<AuthResponseModel> EditProfileAsync(EditProfileModel model);
+    
+    Task<AuthResponseModel> Register(RegisterModel model);
+    Task<AuthResponseModel> Login(LoginModel model);
+    Task LinkTelegram(LinkTelegramModel model);
+    
+    
 
     //public Task<SearchResult<UserItemModel>> SearchAsync(UserSearchModel model);
 }

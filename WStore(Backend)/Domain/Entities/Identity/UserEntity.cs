@@ -17,7 +17,7 @@ public class UserEntity : IdentityUser<Guid>
     public DateTime CreateAt { get; set; } =  DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Utc);
 
     public ICollection<UserRoleEntity> UserRoles { get; set; } = null!;
-    public ICollection<CartEntity> Carts { get; set; } = new List<CartEntity>();
+    public CartEntity Carts { get; set; }
     public ICollection<OrderEntity> Orders { get; set; } = new List<OrderEntity>();
     public ICollection<StoreEntity> Stores { get; set; } = new List<StoreEntity>();
     public ICollection<FeedbackEntity> Feedbacks { get; set; } = new List<FeedbackEntity>();

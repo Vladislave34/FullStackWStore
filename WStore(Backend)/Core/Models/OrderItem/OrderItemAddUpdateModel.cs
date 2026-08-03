@@ -1,9 +1,9 @@
 namespace Core.Models.OrderItem;
 
-public class OrderItemAddUpdateModel
+public sealed record OrderItemAddUpdateModel
 {
-    public Guid ProductVariantId { get; set; }
-    public Guid OrderId { get; set; }
-    public int Quantity { get; set; }
-    public decimal Price { get; set; }
+    public Guid ProductVariantId { get; init; }
+    public Guid OrderId { get; init; }
+    public int Quantity { get; init; }
+    public decimal Price { get; init; }
 }

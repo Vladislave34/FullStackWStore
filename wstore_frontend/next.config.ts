@@ -10,8 +10,8 @@ const nextConfig: NextConfig = {
                 },
                 {
                     protocol: "http",
-                    hostname: "192.168.64.3",
-                    port: "9000",
+                    hostname: "localhost",
+                    port: "5125",
                 },
             ],
         },
@@ -19,7 +19,7 @@ const nextConfig: NextConfig = {
             return [
                    {
                           source: '/api/:path*',
-                          destination: 'http://192.168.64.3:8080/api/:path*',
+                          destination: 'http://localhost:5125/api/:path*',
                    },
             ];
         },

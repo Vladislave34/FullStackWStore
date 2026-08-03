@@ -11,8 +11,8 @@ public class OrderMapper : Profile
     public OrderMapper()
     {
         CreateMap<OrderEntity, OrderItemModel>()
-            .ForMember(x => x.OrderStatus,
-                opt => opt.MapFrom(src => src.OrderStatus.Name))
+            .ForMember(x=>x.OrderStatus,
+                opt=>opt.MapFrom(x=>x.Status.ToString()))
             .ForMember(x=>x.Address,
             opt=> opt.MapFrom(src=>
                 $"{src.Adrress.Country}, {src.Adrress.City}, {src.Adrress.Street}/{src.Adrress.HouseNumber}"))

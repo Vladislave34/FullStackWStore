@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace WebApplication1.Controlers;
 [Route("api/[controller]/[action]")]
 [ApiController]
-[Authorize(Roles = "StoreOwner, Admin")]
+[Authorize(Roles = "Admin")]
 public class ColorController(IColorService colorService) : ControllerBase
 {
     private string Lang =>
@@ -20,6 +20,7 @@ public class ColorController(IColorService colorService) : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetColor(Guid id)
     {
         var entity = await colorService.GetColorById(id, Lang);

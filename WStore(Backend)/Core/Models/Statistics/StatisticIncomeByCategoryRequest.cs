@@ -1,13 +1,13 @@
 namespace Core.Models.Product.Statistics;
 
-public class StatisticIncomeByCategoryRequest
+public sealed record StatisticIncomeByCategoryRequest
 {
     
     
-        public  DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
-        public string Category { get; set; }
-        public string CategoryUk { get; set; }
-        public  double Income { get; set; }
+        public  DateTime StartDate { get; init; }
+        public DateTime EndDate { get; init; }
+        public string Category { get; init; }
+        public string CategoryUk { get; init; }
+        public  double Income { get; init; }
     
 }

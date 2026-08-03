@@ -1,6 +1,6 @@
 namespace Core.Models.User;
 
-public class ResetPasswordModel
+public sealed record ResetPasswordModel
 {
     public string Email { get; set; } = String.Empty;
     public string Token { get; set; } = String.Empty;

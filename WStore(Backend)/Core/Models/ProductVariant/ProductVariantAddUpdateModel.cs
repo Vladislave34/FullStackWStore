@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Core.Models.ProductVariant;
 
-public class ProductVariantAddUpdateModel
+public sealed record ProductVariantAddUpdateModel
 {
     
     public Guid ProductId { get; set; }

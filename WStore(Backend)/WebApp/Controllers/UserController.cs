@@ -10,26 +10,30 @@ namespace WebApplication1.Controlers;
 [ApiController]
 public class UserController
     (UserManager<UserEntity> userManager, IUserService userService,
-    IJwtTokenService jwtTokenService, IMinioImageService imageService,
-    RoleManager<RoleEntity> roleManager, IGoogleAuthService googleAuthService,
+    IJwtTokenService jwtTokenService,  IGoogleAuthService googleAuthService,
     IAuthService authService
     ) : ControllerBase
 {
     [HttpPost]
     public async Task<IActionResult> Login([FromBody] LoginModel model)
     {
+        /*
         var user = await userManager.FindByEmailAsync(model.Email);
         if (user == null || !await userManager.CheckPasswordAsync(user, model.Password))
             return Unauthorized("Invalid email or password.");
 
         var response = await jwtTokenService.CreateAuthResponse(user);
+        */
+        var response = await userService.Login(model);
         return Ok(response);
+        
     }
 
     [HttpPost]
     [Consumes("multipart/form-data")]
     public async Task<IActionResult> Register([FromForm] RegisterModel model)
     {
+        /*
         var existingUser = await userManager.FindByEmailAsync(model.Email);
         if (existingUser != null)
             return BadRequest("User already exists.");
@@ -52,6 +56,8 @@ public class UserController
         await userManager.AddToRoleAsync(user, "User");
 
         var response = await jwtTokenService.CreateAuthResponse(user);
+        */
+        var response = await userService.Register(model);
         return Ok(response);
     }
 
@@ -77,20 +83,7 @@ public class UserController
             return Unauthorized("Invalid or expired refresh token");
         }
     }
-    [HttpPost]
-    [Authorize]
-    public async Task<IActionResult> Logout()
-    {
-        var email = User.Claims.FirstOrDefault(c => c.Type == "email")?.Value;
-        var user = await userManager.FindByEmailAsync(email!);
-        if (user != null)
-        {
-            user.RefreshToken = null;
-            user.RefreshTokenExpiry = null;
-            await userManager.UpdateAsync(user);
-        }
-        return Ok();
-    }
+    
     [HttpPost]
     public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginRequestModel model)
     {
@@ -147,12 +140,14 @@ public class UserController
     [Authorize]
     public async Task<IActionResult> LinkTelegram([FromBody] LinkTelegramModel model)
     {
+        /*
         var userId = await authService.GetUserIdAsync();
         var user = await userManager.FindByIdAsync(userId.ToString());
     
         user.TelegramChatId = model.ChatId;
         await userManager.UpdateAsync(user);
-    
+        */
+        await userService.LinkTelegram(model);
         return Ok();
     }
     

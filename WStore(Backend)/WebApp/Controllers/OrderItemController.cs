@@ -6,10 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 namespace WebApplication1.Controlers;
 [Route("api/[controller]/[action]")]
 [ApiController]
+[Authorize]
 public class OrderItemController(IOrderItemService orderItemService) : ControllerBase
 {
     [HttpGet]
-    [AllowAnonymous]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> GetOrderItems()
     {
         var list = await orderItemService.GetAllOrderItems();
@@ -45,6 +46,7 @@ public class OrderItemController(IOrderItemService orderItemService) : Controlle
     }
 
     [HttpDelete]
+    [Authorize(Roles = "Admin")]
     public async Task<IActionResult> RemoveAllOrderItems()
     {
         await orderItemService.RemoveAllOrderItems();

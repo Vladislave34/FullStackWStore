@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace WebApplication1.Controlers;
 [Route("api/[controller]/[action]")]
 [ApiController]
-[Authorize(Roles = "StoreOwner, Admin")]
+[Authorize(Roles = "Admin")]
 public class SizeController(ISizeService sizeService)  : ControllerBase
 {
     [HttpGet]
@@ -18,6 +18,7 @@ public class SizeController(ISizeService sizeService)  : ControllerBase
     }
 
     [HttpGet("{id}")]
+    [AllowAnonymous]
     public async Task<IActionResult> GetSizeById(Guid id)
     {
         var entity = await sizeService.GetSizeById(id);

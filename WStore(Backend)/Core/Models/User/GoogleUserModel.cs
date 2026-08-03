@@ -2,7 +2,7 @@ using System.Text.Json.Serialization;
 
 namespace Core.Models.User;
 
-public class GoogleUserModel
+public sealed record GoogleUserModel
 {
     [JsonPropertyName("id")]
     public string GogoleId { get; set; } = string.Empty;

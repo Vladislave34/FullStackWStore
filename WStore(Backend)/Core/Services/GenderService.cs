@@ -28,7 +28,7 @@ public class GenderService(AppStoreContext context, IMapper mapper, IRedisServic
     private static GenderItemModel Localize(GenderItemModel model, string lang)
     {
         if (lang.StartsWith("uk", StringComparison.OrdinalIgnoreCase))
-            model.Name = model.NameUk ?? model.Name;
+            model = model with { Name = model.NameUk ?? model.Name };
 
         return model;
     }

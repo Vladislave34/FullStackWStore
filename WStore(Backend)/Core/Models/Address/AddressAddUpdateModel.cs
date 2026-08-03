@@ -1,10 +1,10 @@
 namespace Core.Models.Product.Adrress;
 
-public class AddressAddUpdateModel
+public sealed record AddressAddUpdateModel
 {
     
-    public string City { get; set; }
-    public string Country { get; set; }
-    public string Street { get; set; }
-    public string HouseNumber { get; set; }
+    public string City { get; init; }
+    public string Country { get; init; }
+    public string Street { get; init; }
+    public string HouseNumber { get; init; }
 }
